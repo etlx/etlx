@@ -13,7 +13,7 @@
     "@etlx/cli": "0.1.0"
   },
   "devDependencies": {
-    "@types/node": "^12.11.1",
-    "typescript": "^3.5.3"
+    "@types/node": "^12.12.8",
+    "typescript": "^3.7.2"
   }
 }
