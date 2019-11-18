@@ -1,0 +1,21 @@
+{
+  "name": "etlx",
+  "author": "n.m.batrakov",
+  "license": "MIT",
+  "scripts": {
+    "install": "lerna bootstrap",
+    "build": "lerna run build",
+    "test": "jest",
+    "lint": "tslint --project .",
+    "publish": "lerna publish"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "jest": "^24.9.0",
+    "lerna": "^3.18.4",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.1",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^3.7.2"
+  }
+}

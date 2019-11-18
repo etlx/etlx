@@ -1,0 +1,26 @@
+{
+  "name": "@etlx/operators",
+  "version": "0.1.0",
+  "description": "etlx core operators",
+  "author": "n.m.batrakov",
+  "license": "MIT",
+  "main": "lib/index",
+  "typings": "lib/index",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "tslint --project ."
+  },
+  "dependencies": {
+    "@types/jsdom": "^12.2.4",
+    "@types/minimatch": "^3.0.3",
+    "@types/node": "^12.12.8",
+    "jsdom": "^15.2.1",
+    "minimatch": "^3.0.4",
+    "parse-duration": "^0.1.1",
+    "rxjs": "^6.5.3"
+  }
+}

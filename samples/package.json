@@ -1,0 +1,19 @@
+{
+  "name": "@etlx/samples",
+  "version": "0.1.0",
+  "description": "etlx samples",
+  "author": "n.m.batrakov",
+  "license": "MIT",
+  "scripts": {
+    "start": "npm run build && node ./dist/index.js",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@etlx/operators": "0.1.0",
+    "@etlx/cli": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.11.1",
+    "typescript": "^3.5.3"
+  }
+}
