@@ -9,8 +9,9 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@etlx/operators": "0.1.0",
-    "@etlx/cli": "0.1.0"
+    "@etlx/operators": "0.2.0",
+    "@etlx/cli": "0.2.0",
+    "rxjs": "^6.5.3"
   },
   "devDependencies": {
     "@types/node": "^12.12.8",

@@ -18,4 +18,4 @@ etlx()
     .warnings(false),
 )
 .build()
-.run()
+.run(process.argv)
