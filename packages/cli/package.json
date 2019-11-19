@@ -6,9 +6,6 @@
   "license": "MIT",
   "main": "lib/index",
   "typings": "lib/index",
-  "files": [
-    "lib"
-  ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
