@@ -1,3 +1,7 @@
+export * from './http'
+export * from './logging'
+export * from './array'
+
 export const assertNever = (_: never) => {}
 
 export function isNullOrUndefined<T>(value: T | null | undefined): value is null | undefined {
@@ -6,8 +10,4 @@ export function isNullOrUndefined<T>(value: T | null | undefined): value is null
 
 export function notNullOrUndefined<T>(value: T | null |undefined): value is T {
     return value !== undefined && value !== null
-}
-
-export function flatten<T>(source: T[][]): Array<T> {
-    return new Array<T>().concat(...source)
 }

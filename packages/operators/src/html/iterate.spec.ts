@@ -1,7 +1,7 @@
 import { forEachNode, mapNode, filterNode } from './iterate'
 import { of } from 'rxjs'
 import { toArray } from 'rxjs/operators'
-import { notNullOrUndefined } from '../@internal/utils'
+import { notNullOrUndefined } from '../utils/array'
 import { isTag } from './utils'
 import { wrapHtml, inline } from './testUtils'
 

@@ -1,6 +1,6 @@
 import { OperatorFunction, Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
-import { LoggerFactory, Logger, getLogger } from '../@internal/logging'
+import { LoggerFactory, Logger, getLogger } from '../utils/logging'
 
 export function log<T>(
     factory: LoggerFactory | undefined,
