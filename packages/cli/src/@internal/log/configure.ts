@@ -2,13 +2,18 @@ import pino from 'pino'
 import { LogLevel } from './types'
 import { createLoggerFactory } from './createLoggerFactory'
 import { assertNever } from '../utils'
+import { nullLoggerFactory } from './nullLogger'
 
 export type LogOptions = {
-    level?: LogLevel,
+    level?: LogLevel | 'silent',
     raw?: boolean,
 }
 
 export const configureLogging = (opts: LogOptions) => {
+    if (opts.level === 'silent') {
+        return nullLoggerFactory
+    }
+
     const pretty = opts.raw !== true
     const options: pino.LoggerOptions = {
         prettyPrint: pretty,
