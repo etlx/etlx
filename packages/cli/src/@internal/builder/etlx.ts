@@ -12,7 +12,7 @@ export interface EtlxBuilder {
     pipe(pipes: EtlPipe[]): EtlxBuilder,
     pipe(pipes: { [name: string]: EtlPipe }): EtlxBuilder,
     configure(cb: (x: ConfigurationBuilder) => ConfigurationBuilder): EtlxBuilder,
-    build(): { run: (argv: string[]) => void },
+    build(): { run: (argv?: string[]) => void },
 }
 
 export function etlx(): EtlxBuilder {
