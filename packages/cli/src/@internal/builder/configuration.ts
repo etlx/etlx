@@ -17,33 +17,33 @@ export interface ConfigurationBuilder {
 }
 
 export function createConfigBuilder(): ConfigurationBuilder {
-    const opts: ConfigBuildOptions = {
+    return configBuilder({
         paths: [],
         objects: [],
         schemes: [],
         suppressWarnings: false,
-    }
+    })
+}
 
+function configBuilder(opts: ConfigBuildOptions): ConfigurationBuilder {
     return {
-        addSchema(...configSchemes: convict.Schema<any>[]) {
-            opts.schemes.push(...configSchemes)
-            return this
-        },
-        addFile(...paths: string[]) {
-            opts.paths.push(...paths)
-            return this
-        },
-        addObject(...configs: any[]) {
-            opts.objects.push(...configs)
-            return this
-        },
-        warnings(enabled: boolean) {
-            opts.suppressWarnings = !enabled
-            return this
-        },
-        build() {
-            return buildConfig(opts)
-        },
+        addSchema: (...configSchemes: convict.Schema<any>[]) => configBuilder({
+            ...opts,
+            schemes: [...opts.schemes, ...configSchemes],
+        }),
+        addFile: (...paths: string[]) => configBuilder({
+            ...opts,
+            paths: [...opts.paths, ...paths],
+        }),
+        addObject: (...configs: any[]) => configBuilder({
+            ...opts,
+            objects: [...opts.objects, ...configs],
+        }),
+        warnings: (enabled: boolean) =>  configBuilder({
+            ...opts,
+            suppressWarnings: !enabled,
+        }),
+        build: () => buildConfig(opts),
     }
 }
 
