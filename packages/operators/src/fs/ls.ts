@@ -2,7 +2,7 @@ import { promises as fs, existsSync } from 'fs'
 import path, { ParsedPath } from 'path'
 import { OperatorFunction, from } from 'rxjs'
 import { mergeMap, filter, map } from 'rxjs/operators'
-import { isNullOrUndefined, notNullOrUndefined, flatten } from '../utils/array'
+import { isNullOrUndefined, notNullOrUndefined, flatten } from '../utils'
 import * as minimatch from 'minimatch'
 const empty: any[] = []
 

@@ -3,7 +3,7 @@ import { OperatorFunction, of, from } from 'rxjs'
 import { isNullOrUndefined } from 'util'
 import { mergeMap, filter, map, toArray } from 'rxjs/operators'
 import { authBasic, ensureSuccessStatusCode } from '../utils/http'
-import { notNullOrUndefined } from '../utils/array'
+import { notNullOrUndefined } from '../utils'
 import { getDom } from './utils'
 import { mapNode } from './iterate'
 

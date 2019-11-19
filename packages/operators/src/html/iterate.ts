@@ -2,7 +2,7 @@ import { OperatorFunction, from } from 'rxjs'
 import { map, mergeMap, filter } from 'rxjs/operators'
 import { JSDOM } from 'jsdom'
 import { getDom, isHtmlElement, forEach, toArray } from './utils'
-import { notNullOrUndefined, flatten } from '../utils/array'
+import { notNullOrUndefined, flatten } from '../utils'
 
 type HtmlOperator = OperatorFunction<JSDOM | string, JSDOM>
 
