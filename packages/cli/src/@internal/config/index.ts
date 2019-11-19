@@ -1,6 +1,6 @@
 import fs from 'fs'
 import convict from 'convict'
-import { flatMap } from '../utils'
+import { flatten } from '../utils'
 
 const throwIfEmpty = null
 
@@ -26,7 +26,7 @@ function validateConfigValue(obj: any, property?: string): string[] {
             return validateConfigValue(value, currentProp)
         })
 
-        return flatMap(arrays)
+        return flatten(arrays)
     } else {
         return []
     }

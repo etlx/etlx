@@ -8,6 +8,6 @@ export function notNullOrUndefined<T>(value: T | null |undefined): value is T {
     return value !== undefined && value !== null
 }
 
-export function flatMap<T>(source: T[][]) {
+export function flatten<T>(source: T[][]) {
     return new Array<T>().concat(...source)
 }

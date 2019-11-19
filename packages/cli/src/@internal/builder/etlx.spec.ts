@@ -1,4 +1,4 @@
-import { etlx } from '.'
+import { etlx } from './etlx'
 import { Observable } from 'rxjs'
 import { EtlPipe } from '../pipe'
 

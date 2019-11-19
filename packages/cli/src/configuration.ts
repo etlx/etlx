@@ -1,0 +1,1 @@
+export { createSchema } from './@internal/config/index'

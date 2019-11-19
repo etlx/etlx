@@ -1,5 +1,5 @@
 import convict from 'convict'
-import { notNullOrUndefined, flatMap } from '../utils'
+import { notNullOrUndefined, flatten } from '../utils'
 
 type DocObject = { name: string, parent?: DocObject }
 type DocProp = {
@@ -20,7 +20,7 @@ export function getDocs(config: convict.Config<any>): DocProp[] {
             return handlePropertySchema(value, name, currentParent)
         })
 
-        return flatMap(arrays)
+        return flatten(arrays)
     }
 
     function handlePropertySchema<T>(node: convict.Schema<T> | convict.SchemaObj<T>, name: string, parent?: DocObject): DocProp[] {
