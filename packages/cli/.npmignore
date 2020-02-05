@@ -1,4 +1,4 @@
-**/tsconfig.json
+tsconfig.json
 **/*.spec.ts
 **/*.spec.js
 **/*.spec.js.map
