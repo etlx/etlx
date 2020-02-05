@@ -56,11 +56,10 @@ async function fetchImage(url: string, headers: any) {
     }
 
     const mime = getMediaType(contentType)
+    const buffer = await resp.arrayBuffer()
+    const base64 = toBase64(buffer)
 
-    return resp.arrayBuffer().then(buffer => ({
-        mime,
-        base64: toBase64(buffer),
-    }))
+    return { mime, base64 }
 }
 
 function getMediaType(contentType: string) {
@@ -71,5 +70,5 @@ function toBase64(buffer: ArrayBuffer) {
     const bytes = new Uint8Array(buffer)
     const binary = bytes.reduce((acc, x) => acc + String.fromCharCode(x), '')
 
-    return btoa(binary)
+    return new Buffer(binary, 'binary').toString('base64')
 }
