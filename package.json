@@ -7,7 +7,7 @@
     "build": "lerna run build",
     "test": "jest",
     "lint": "tslint --project .",
-    "publish": "lerna build && lerna publish"
+    "publish": "lerna run build && lerna publish"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
