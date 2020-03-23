@@ -10,6 +10,8 @@ import fetch from 'node-fetch'
 })(global)
 
 export const jsonResponse = (body: any) => Promise.resolve<Response>(new Response(JSON.stringify(body)))
+export const faultyResponse = (status: number = 500) => Promise.resolve<Response>(new Response('', { status }))
+
 export const returnOnce = <TOut>(x: TOut) => (mock: jest.Mock<TOut>) => mock.mockReturnValueOnce(x)
 
 export type MockFetch = jest.Mock<Promise<Response>, [RequestInfo, RequestInit | undefined]>
