@@ -74,7 +74,7 @@ describe('fromJsonRequest', () => {
 
         let actual = fromJsonRequest({ url: '' }).toPromise()
 
-        await expect(actual).rejects.toThrow(new Error('Response content-type (text/plain) does not indicate json payload'))
+        await expect(actual).rejects.toThrow(new Error('Response media type is unexpected. Server responded with text/plain, but application/json is expected'))
     })
 
     it('force json parse', async () => {

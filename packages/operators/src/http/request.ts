@@ -4,6 +4,7 @@ import { fromFetch } from 'rxjs/fetch'
 import { LoggerFactory, Logger } from '../utils'
 import { formatUrl } from './utils'
 import { log } from '..'
+import { invalidMediaType, faultyResponse } from './errors'
 
 export type UrlParams = {
     host: string,
@@ -36,7 +37,7 @@ export function fromJsonRequest<T = any>(request: FromJsonRequestOptions) {
         mergeMap(response =>
             response.ok
             ? parseJson<T>(request, response)
-            : throwError(new Error(`Response status code (${response.status}) does not indicate success`)),
+            : throwError(faultyResponse(response)),
         ),
     )
 }
@@ -48,7 +49,7 @@ function parseJson<T>(req: FromJsonRequestOptions, res: Response) {
 
     return canParse
         ? from(res.json() as Promise<T>)
-        : throwError(new Error(`Response content-type (${contentType}) does not indicate json payload`))
+        : throwError(invalidMediaType(contentType, 'application/json'))
 }
 
 function getUrl(url: UrlParams | string) {
