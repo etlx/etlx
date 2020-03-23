@@ -1,4 +1,4 @@
-export * from './http'
+export * from './promisify'
 export * from './logging'
 export * from './array'
 
