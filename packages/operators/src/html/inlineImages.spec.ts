@@ -1,7 +1,8 @@
-import { mockFetch, returnOnce } from '../@internal/testing/fetch'
+import { mockFetch, returnOnce, faultyResponse } from '../@internal/testing/fetch'
 import { inlineImages } from './inlineImages'
 import { promisifyLast } from '../utils'
 import { JSDOM } from 'jsdom'
+import { invalidMediaType } from '../http'
 
 const host = 'http://example.com'
 const png = 'image/png'
@@ -58,10 +59,28 @@ describe('inlineImages', () => {
 
         let actual = sut(init, { host }).then(body)
 
-        await expect(actual).rejects.toThrow(new Error('Response Content-Type is not found or is not an image'))
+        await expect(actual).rejects.toThrow(invalidMediaType('text/plain', 'image/*'))
+    })
+
+    it('skip faulty response', async () => {
+        mockFetch(returnOnce(faultyResponse()))
+
+        let init = '<img src="img.png">'
+
+        let actual = await sut(init, { host, skipOnError: true }).then(body)
+        let expected = init
+
+        expect(actual).toEqual(expected)
     })
 
     it('skip invalid images', async () => {
+        mockFetch(returnOnce(respondWithImage('text/plain')))
 
+        let init = '<img src="img.png">'
+
+        let actual = await sut(init, { host, skipOnError: true }).then(body)
+        let expected = init
+
+        expect(actual).toEqual(expected)
     })
 })

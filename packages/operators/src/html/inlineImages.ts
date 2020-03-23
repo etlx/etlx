@@ -1,74 +1,95 @@
 import { JSDOM } from 'jsdom'
-import { OperatorFunction, of, from } from 'rxjs'
-import { isNullOrUndefined } from 'util'
-import { mergeMap, filter, map, toArray } from 'rxjs/operators'
-import { authBasic, ensureSuccessStatusCode } from '../utils/http'
-import { notNullOrUndefined } from '../utils'
+import { OperatorFunction, of, from, throwError, empty, identity } from 'rxjs'
+import { mergeMap, map, mapTo, defaultIfEmpty } from 'rxjs/operators'
+import { isNullOrUndefined } from '../utils'
+import { fromRequest, invalidMediaType, faultyResponse, authBasic, formatUrl } from '../http'
+
 import { getDom } from './utils'
 import { mapNode } from './iterate'
 
 
-export function inlineImages(options?: { host?: string, username?: string, password?: string }): OperatorFunction<JSDOM | string, any> {
-    const opts = options || {}
-    const hasCredentials = opts.username !== undefined && opts.password !== undefined
-    const headers = hasCredentials
-        ? authBasic({ username: opts.username!, password: opts.password! })
-        : undefined
+export type InlineImagesOptions = {
+    host?: string,
+    username?: string,
+    password?: string,
+    skipOnError?: boolean,
+}
 
+type Image = { mime: string, base64: string }
 
-    return stream => stream.pipe(
+export function inlineImages(options?: InlineImagesOptions): OperatorFunction<JSDOM | string, JSDOM> {
+    let opts = options || {}
+
+    return $ => $.pipe(
         mergeMap((input) => {
-            const dom = getDom(input)
+            let dom = getDom(input)
 
             return of(dom).pipe(
-                mapNode((node) => {
-                    if (node.nodeName !== 'IMG') return undefined
-
-                    const element = node as HTMLElement
-                    const src = element.getAttribute('src')
-
-                    if (isNullOrUndefined(src)) return undefined
-
-                    const url = opts.host === undefined ? src : new URL(src, opts.host).toJSON()
-
-                    return fetchImage(url, headers)
-                    .then(({ base64, mime }) => element.setAttribute('src', `data:${mime};base64, ${base64}`))
-                    .catch(x => console.error(x))
-                }),
-                filter(notNullOrUndefined),
-                toArray(),
-                mergeMap(x => from(Promise.all(x))),
-                map(() => dom),
+                mapNode(updateImage(opts)),
+                mergeMap(identity),
+                mapTo(dom),
+                defaultIfEmpty(dom),
             )
         }),
     )
 }
 
-async function fetchImage(url: string, headers: any) {
-    const resp = await fetch(url, { headers })
+function updateImage(opts: InlineImagesOptions) {
+    let hasCredentials = opts.username !== undefined && opts.password !== undefined
+    let headers = hasCredentials
+        ? authBasic({ username: opts.username!, password: opts.password! })
+        : undefined
 
-    ensureSuccessStatusCode(resp)
+    return (node: Node) => {
+        if (node.nodeName !== 'IMG') return empty()
 
-    const contentType = resp.headers.get('content-type')
+        const element = node as HTMLElement
+        const src = element.getAttribute('src')
 
-    if (contentType === null || !contentType.startsWith('image/')) {
-        throw new Error('Response Content-Type is not found or is not an image')
+        if (isNullOrUndefined(src)) return empty()
+
+        const resp$ = fromRequest({
+            url: formatUrl(src, opts),
+            headers,
+        })
+
+        return resp$.pipe(
+            mergeMap(toImage(opts)),
+            map(updateImageSrc(element)),
+        )
     }
-
-    const mime = getMediaType(contentType)
-    const buffer = await resp.arrayBuffer()
-    const base64 = toBase64(buffer)
-
-    return { mime, base64 }
 }
 
-function getMediaType(contentType: string) {
-    return contentType.split(';')[0]
+function updateImageSrc(element: HTMLElement) {
+    return ({ base64, mime }: Image) => {
+        element.setAttribute('src', `data:${mime};base64, ${base64}`)
+
+        return element
+    }
+}
+
+function toImage(opts: InlineImagesOptions) {
+    return (response: Response) => {
+        if (!response.ok) return opts.skipOnError
+            ? empty()
+            : throwError(faultyResponse(response))
+
+        let contentType = response.headers.get('content-type') || ''
+        let [mime] = contentType.split(';')
+
+        if (!contentType.startsWith('image/')) return opts.skipOnError
+            ? empty()
+            : throwError(invalidMediaType(mime, 'image/*'))
+
+        return from(response.arrayBuffer()).pipe(
+            map(toBase64),
+            map(base64 => ({ base64, mime } as Image)))
+    }
 }
 
 function toBase64(buffer: ArrayBuffer) {
-    const bytes = new Uint8Array(buffer)
-    const binary = bytes.reduce((acc, x) => acc + String.fromCharCode(x), '')
+    let appendCode = (xs: string, code: number) => xs + String.fromCharCode(code)
+    let binary = new Uint8Array(buffer).reduce(appendCode, '')
 
-    return new Buffer(binary, 'binary').toString('base64')
+    return btoa(binary)
 }
