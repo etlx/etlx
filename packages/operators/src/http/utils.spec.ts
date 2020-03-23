@@ -45,7 +45,7 @@ describe('http/formatUrl', () => {
     })
 
 
-    it('can format absolute url', () => {
+    it('format absolute url', () => {
         let actual = formatUrl('http://example.com/path')
 
         let expected = 'http://example.com/path'
@@ -53,10 +53,18 @@ describe('http/formatUrl', () => {
         expect(actual).toEqual(expected)
     })
 
-    it('can rebase absolute url', () => {
+    it('rebase absolute url', () => {
         let actual = formatUrl('http://example.com/path', { host: 'http://test.com' })
 
         let expected = 'http://test.com/path'
+
+        expect(actual).toEqual(expected)
+    })
+
+    it('preserve absolute url', () => {
+        let actual = formatUrl('http://example.com/path', { host: 'http://test.com', preserveAbsoluteUrls: true })
+
+        let expected = 'http://example.com/path'
 
         expect(actual).toEqual(expected)
     })
