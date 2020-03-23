@@ -97,3 +97,4 @@ todo.md
 **/*.js
 **/*.js.map
 **/*.d.ts
+data

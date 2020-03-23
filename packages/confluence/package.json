@@ -1,0 +1,14 @@
+{
+  "name": "@etlx/confluence",
+  "version": "0.3.0",
+  "description": "Confluence operators for @etlx",
+  "author": "n.m.batrakov",
+  "license": "MIT",
+  "main": "index",
+  "typings": "index",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "tslint --project ."
+  }
+}
