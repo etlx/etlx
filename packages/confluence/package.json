@@ -1,6 +1,6 @@
 {
   "name": "@etlx/confluence",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Confluence operators for @etlx",
   "author": "n.m.batrakov",
   "license": "MIT",
@@ -10,5 +10,8 @@
     "build": "tsc",
     "test": "jest",
     "lint": "tslint --project ."
+  },
+  "dependencies": {
+    "@etlx/operators": "^0.3.1"
   }
 }
