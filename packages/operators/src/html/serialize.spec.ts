@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom'
 import { stringifyBody, serialize } from './serialize'
 import { of } from 'rxjs'
-import { wrapHtml } from './testUtils'
+import { wrapHtml } from '../@internal/testing/html'
 
 
 describe('stringify', () => {

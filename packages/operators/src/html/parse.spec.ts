@@ -1,5 +1,5 @@
 import { parse } from './parse'
-import { wrapHtml } from './testUtils'
+import { wrapHtml } from '../@internal/testing/html'
 import { of } from 'rxjs'
 
 describe('parse', () => {

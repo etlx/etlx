@@ -2,8 +2,8 @@ import { from, throwError, Observable } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 import { fromFetch } from 'rxjs/fetch'
 import { LoggerFactory, Logger } from '../utils'
+import { log } from '../core'
 import { formatUrl } from './utils'
-import { log } from '..'
 import { invalidMediaType, faultyResponse } from './errors'
 
 export type UrlParams = {

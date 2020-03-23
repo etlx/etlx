@@ -1,3 +1,3 @@
-export * from './snapshot'
+export * from './cache'
 export * from './types'
 export * from './filestore'

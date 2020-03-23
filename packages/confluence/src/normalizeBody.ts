@@ -1,6 +1,6 @@
 import { Observable, of, OperatorFunction } from 'rxjs'
 import { mergeMap, map, tap } from 'rxjs/operators'
-import { pipeIf } from '@etlx/operators/core'
+import { choose } from '@etlx/operators/core'
 import { minify, stringifyBody, forEachAttribute, inlineImages } from '@etlx/operators/html'
 import { LoggerFactory, getLogger } from '@etlx/operators/utils'
 import { formatUrl } from '@etlx/operators/http'
@@ -31,7 +31,7 @@ const cleanAttributes = (host: string) => ($: Observable<string>) => $.pipe(
 
 const cleanHtml = (opts: NormalizeBodyOptions) => ($: Observable<string>) => $.pipe(
     cleanAttributes(opts.confluence.host),
-    pipeIf(opts.inlineImages, inlineImages(opts.confluence)),
+    choose(opts.inlineImages, inlineImages(opts.confluence)),
     minify(),
 )
 

@@ -3,7 +3,7 @@ import { of } from 'rxjs'
 import { toArray } from 'rxjs/operators'
 import { notNullOrUndefined } from '../utils'
 import { isTag } from './utils'
-import { wrapHtml, inline } from './testUtils'
+import { wrapHtml, inline } from '../@internal/testing/html'
 
 
 describe('forEachNode', () => {
