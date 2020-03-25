@@ -53,7 +53,7 @@ function getScriptsDescription(pipes: Pipes): string {
     const namedScripts = pipes.map(x => x.name).filter(notNullOrUndefined)
     const availableScripts = namedScripts.length === 0 ? [] : [
         'Available scripts are:',
-        namedScripts.map(x => `* ${x}`),
+        ...namedScripts.map(x => `* ${x}`),
     ]
 
     const lines = [
