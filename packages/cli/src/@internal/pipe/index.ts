@@ -1,22 +1,18 @@
 import { OperatorFunction, of, merge, concat, Observable } from 'rxjs'
 import { notNullOrUndefined } from '../utils'
 
-export type EtlPipe = (config: any) => OperatorFunction<void, any>
+export type EtlPipe = (config: any) => OperatorFunction<any, any>
 
 export type Pipes = Array<{
     name?: string,
     pipe: EtlPipe,
 }>
 
-export function runPipeline(pipeline: OperatorFunction<void, any>) {
-    return pipeline(of(undefined)).toPromise()
-}
-
 export function createPipeline(
     pipes: Pipes,
     scripts: string[],
     concurrent: boolean,
-): (config: any) => OperatorFunction<void, any> {
+): EtlPipe {
     const filtered = scripts.length === 0
         ? pipes
         : scripts.map(name => pipes.find(x => x.name === name)).filter(notNullOrUndefined)

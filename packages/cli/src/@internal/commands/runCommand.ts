@@ -1,7 +1,8 @@
-import { Pipes, isScriptsValid, createPipeline, runPipeline } from '../pipe'
+import { Pipes, isScriptsValid, createPipeline } from '../pipe'
 import { LogLevel } from '../log/types'
 import { notNullOrUndefined } from '../utils'
 import { configureLogging, LogOptions } from '../log/configure'
+import { of } from 'rxjs'
 
 export const runCommand = (
     cli: any,
@@ -18,7 +19,6 @@ export const runCommand = (
         if (scripts.length > 0 && !isScriptsValid(pipes, scripts)) {
             cmd.help()
             process.exit(1)
-            return
         }
 
         const logger = createLogger(cmd, config)
@@ -26,13 +26,18 @@ export const runCommand = (
 
         const pipeline = createPipeline(pipes, scripts, cmd.concurrent || false)
 
-        runPipeline(pipeline(opts))
-        .then(() => {
-            process.exit(0)
-        })
-        .catch((error) => {
-            console.error('Error', error)
-            process.exit(1)
+        of(cmd)
+        .pipe(pipeline(opts))
+        .subscribe({
+            next: () => {},
+            error: (e) => {
+                console.error('Error', e)
+                process.exit(1)
+            },
+            complete: () => {
+                console.log('Pipeline completed')
+                process.exit(0)
+            },
         })
     })
 
