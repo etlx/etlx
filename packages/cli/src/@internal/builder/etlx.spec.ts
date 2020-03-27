@@ -10,7 +10,7 @@ const args = (...xs: string[]) => ['node', 'scriptpath', ...xs]
 
 describe('etlx', () => {
     it('configuration functions must not mutate builder', () => {
-        const sut = etlx()
+        let sut = etlx()
 
         expect(
             sut === sut.configure(x => x) ||

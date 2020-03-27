@@ -2,34 +2,34 @@ import { createConfigBuilder } from './configuration'
 
 describe('configurationBuilder', () => {
     it('can build empty configuration', () => {
-        const sut = createConfigBuilder()
+        let sut = createConfigBuilder()
 
-        const expected = {}
-        const actual = sut.build().getProperties()
+        let expected = {}
+        let actual = sut.build().getProperties()
 
         expect(actual).toEqual(expected)
     })
 
     it('can build configuration from object', () => {
-        const sut = createConfigBuilder().addObject({ foo: 'bar' })
+        let sut = createConfigBuilder().addObject({ foo: 'bar' })
 
-        const expected = { foo: 'bar' }
-        const actual = sut.build().getProperties()
+        let expected = { foo: 'bar' }
+        let actual = sut.build().getProperties()
 
         expect(actual).toEqual(expected)
     })
 
     it('can build configuration from multiple objects', () => {
-        const sut = createConfigBuilder().addObject({ foo: 'bar' }).addObject({ baz: 42 })
+        let sut = createConfigBuilder().addObject({ foo: 'bar' }).addObject({ baz: 42 })
 
-        const expected = { foo: 'bar', baz: 42 }
-        const actual = sut.build().getProperties()
+        let expected = { foo: 'bar', baz: 42 }
+        let actual = sut.build().getProperties()
 
         expect(actual).toEqual(expected)
     })
 
     it('configuration functions must not mutate builder', () => {
-        const sut = createConfigBuilder()
+        let sut = createConfigBuilder()
 
         expect(
             sut === sut.addObject({}) &&

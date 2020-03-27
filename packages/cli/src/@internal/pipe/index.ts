@@ -13,11 +13,11 @@ export function createPipeline(
     scripts: string[],
     concurrent: boolean,
 ): EtlPipe {
-    const filtered = scripts.length === 0
+    let filtered = scripts.length === 0
         ? pipes
         : scripts.map(name => pipes.find(x => x.name === name)).filter(notNullOrUndefined)
 
-    const combine = concurrent ? merge : concat
+    let combine = concurrent ? merge : concat
 
     return (config: any) =>
         (stream: Observable<void>) =>
@@ -25,7 +25,7 @@ export function createPipeline(
 }
 
 export function isScriptsValid(pipes: Pipes, scripts: string[]) {
-    const pipesKeys = pipes.map(x => x.name).filter(notNullOrUndefined)
+    let pipesKeys = pipes.map(x => x.name).filter(notNullOrUndefined)
 
     if (pipesKeys.length === 0) {
         console.error('Error: Unable to run ETL - there are no named scritps')

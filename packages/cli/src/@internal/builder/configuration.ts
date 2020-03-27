@@ -48,8 +48,8 @@ function configBuilder(opts: ConfigBuildOptions): ConfigurationBuilder {
 }
 
 function buildConfig(opts: ConfigBuildOptions): convict.Config<any> {
-    const schema = Object.assign({}, ...opts.schemes)
-    const config = convict(schema)
+    let schema = Object.assign({}, ...opts.schemes)
+    let config = convict(schema)
 
     config.loadFile(opts.paths)
 

@@ -15,8 +15,8 @@ export function getDocs(config: convict.Config<any>): DocProp[] {
     return handleObjectSchema(<any>config.getSchema())
 
     function handleObjectSchema(node: { properties: convict.Schema<any> }, name?: string, parent?: DocObject): DocProp[] {
-        const currentParent = name === undefined ? undefined : { name, parent }
-        const arrays = Object.entries(node.properties).map(([name, value]) => {
+        let currentParent = name === undefined ? undefined : { name, parent }
+        let arrays = Object.entries(node.properties).map(([name, value]) => {
             return handlePropertySchema(value, name, currentParent)
         })
 
@@ -28,9 +28,9 @@ export function getDocs(config: convict.Config<any>): DocProp[] {
             return handleObjectSchema(<any>node, name, parent)
         }
 
-        const prop = node as convict.SchemaObj<T>
+        let prop = node as convict.SchemaObj<T>
 
-        const doc: DocProp = {
+        let doc: DocProp = {
             name,
             parent,
             doc: prop.doc,
@@ -43,7 +43,7 @@ export function getDocs(config: convict.Config<any>): DocProp[] {
     }
 
     function isObjectSchema<T>(obj: any): boolean {
-        const keys = Object.keys(obj)
+        let keys = Object.keys(obj)
         return keys.length === 1 && keys[0] === 'properties'
     }
 }
@@ -59,12 +59,12 @@ export function formatDocs(docs: DocProp[]) {
 
     const lines = docs.reduce(
         (acc, doc) => {
-            const br = '\n'
-            const title = `## ${formatBreadcrumbs(doc)}${doc.env === undefined ? '' : ` (${doc.env})`}`
-            const desc = doc.doc === undefined ? undefined : doc.doc
-            const format = `* format: ${doc.format}`
-            const required = `* required: ${doc.default === 'null'}`
-            const defaultValue = doc.default === 'null' ? undefined : `* default: ${doc.default}`
+            let br = '\n'
+            let title = `## ${formatBreadcrumbs(doc)}${doc.env === undefined ? '' : ` (${doc.env})`}`
+            let desc = doc.doc === undefined ? undefined : doc.doc
+            let format = `* format: ${doc.format}`
+            let required = `* required: ${doc.default === 'null'}`
+            let defaultValue = doc.default === 'null' ? undefined : `* default: ${doc.default}`
 
             const result = [
                 title,

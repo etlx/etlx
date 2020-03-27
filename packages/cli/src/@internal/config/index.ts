@@ -9,9 +9,9 @@ export function validateConfig(config: convict.Config<any>, suppresWarnings?: bo
         output: suppresWarnings ? () => {} : undefined,
     } as any)
 
-    const missingProps = validateConfigValue(config.getProperties())
+    let missingProps = validateConfigValue(config.getProperties())
     if (missingProps.length > 0) {
-        const errors = missingProps.map(x => `Config property '${x}' is required, but missing`).join('\n* ')
+        let errors = missingProps.map(x => `Config property '${x}' is required, but missing`).join('\n* ')
 
         throw new Error(`Config is invalid\n* ${errors}\n`)
     }
@@ -21,8 +21,8 @@ function validateConfigValue(obj: any, property?: string): string[] {
     if (obj === throwIfEmpty) {
         return property === undefined ? [] : [property]
     } else if (typeof obj === 'object') {
-        const arrays = Object.entries(obj).map(([key, value]) => {
-            const currentProp = property === undefined ? key : `${property}:${key}`
+        let arrays = Object.entries(obj).map(([key, value]) => {
+            let currentProp = property === undefined ? key : `${property}:${key}`
             return validateConfigValue(value, currentProp)
         })
 

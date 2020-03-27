@@ -18,10 +18,10 @@ export const runCommand = (config: any, pipes: Pipes) => (cli: commander.Command
             process.exit(1)
         }
 
-        const logger = createLogger(cmd, config)
-        const opts = { ...config, logger }
+        let logger = createLogger(cmd, config)
+        let opts = { ...config, logger }
 
-        const pipeline = createPipeline(pipes, scripts, cmd.concurrent || false)
+        let pipeline = createPipeline(pipes, scripts, cmd.concurrent || false)
 
         of(cmd)
         .pipe(pipeline(opts))
@@ -40,8 +40,8 @@ export const runCommand = (config: any, pipes: Pipes) => (cli: commander.Command
 
 
 function createLogger(cmd: { raw?: boolean, log?: LogLevel }, config: { log?: LogOptions }) {
-    const logConfig = config.log || {}
-    const opts = {
+    let logConfig = config.log || {}
+    let opts = {
         ...logConfig,
         raw: cmd.raw || logConfig.raw,
         level: cmd.log || logConfig.level }
@@ -50,15 +50,15 @@ function createLogger(cmd: { raw?: boolean, log?: LogLevel }, config: { log?: Lo
 }
 
 function getScriptsDescription(pipes: Pipes): string {
-    const pad = ''.padStart(22)
+    let pad = ''.padStart(22)
 
-    const namedScripts = pipes.map(x => x.name).filter(notNullOrUndefined)
-    const availableScripts = namedScripts.length === 0 ? [] : [
+    let namedScripts = pipes.map(x => x.name).filter(notNullOrUndefined)
+    let availableScripts = namedScripts.length === 0 ? [] : [
         'Available scripts are:',
         ...namedScripts.map(x => `* ${x}`),
     ]
 
-    const lines = [
+    let lines = [
         'Names of the scripts to run.',
         'If none specified, all scripts will run [--concurrent]ly (by default).',
         ...availableScripts,
