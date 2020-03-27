@@ -3,11 +3,12 @@
   "author": "n.m.batrakov",
   "license": "MIT",
   "scripts": {
-    "install": "lerna bootstrap",
+    "install": "lerna bootstrap --hoist",
     "build": "lerna run build",
     "test": "jest",
     "lint": "tslint --project .",
-    "publish": "lerna run build && lerna publish"
+    "publish": "lerna run build && lerna publish",
+    "lerna": "lerna"
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
