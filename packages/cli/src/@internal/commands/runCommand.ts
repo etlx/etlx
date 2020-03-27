@@ -3,12 +3,9 @@ import { LogLevel } from '../log/types'
 import { notNullOrUndefined } from '../utils'
 import { configureLogging, LogOptions } from '../log/configure'
 import { of } from 'rxjs'
+import commander from 'commander'
 
-export const runCommand = (
-    cli: any,
-    config: any,
-    pipes: Pipes,
-) => cli
+export const runCommand = (config: any, pipes: Pipes) => (cli: commander.Command) => cli
     .command('run [scripts...]')
     .description('Run specified ETL script', { scripts: getScriptsDescription(pipes) })
     .option('--concurrent', 'True if all scripts should run in concurrently.', true)
