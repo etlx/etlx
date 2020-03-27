@@ -21,7 +21,7 @@ export function createConfigBuilder(): ConfigurationBuilder {
         paths: [],
         objects: [],
         schemes: [],
-        suppressWarnings: false,
+        suppressWarnings: true,
     })
 }
 
