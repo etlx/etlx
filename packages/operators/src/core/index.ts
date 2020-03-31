@@ -1,4 +1,6 @@
 export * from './expandWhile'
 export * from './log'
-export * from './pipeIf'
+export * from './choose'
 export * from './split'
+export * from './combine'
+export * from './throwWhen'

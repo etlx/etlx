@@ -1,13 +1,11 @@
-import { Pipes, isScriptsValid, createPipeline, runPipeline } from '../pipe'
+import { Pipes, isScriptsValid, createPipeline } from '../pipe'
 import { LogLevel } from '../log/types'
 import { notNullOrUndefined } from '../utils'
 import { configureLogging, LogOptions } from '../log/configure'
+import { of } from 'rxjs'
+import commander from 'commander'
 
-export const runCommand = (
-    cli: any,
-    config: any,
-    pipes: Pipes,
-) => cli
+export const runCommand = (config: any, pipes: Pipes) => (cli: commander.Command) => cli
     .command('run [scripts...]')
     .description('Run specified ETL script', { scripts: getScriptsDescription(pipes) })
     .option('--concurrent', 'True if all scripts should run in concurrently.', true)
@@ -18,28 +16,32 @@ export const runCommand = (
         if (scripts.length > 0 && !isScriptsValid(pipes, scripts)) {
             cmd.help()
             process.exit(1)
-            return
         }
 
-        const logger = createLogger(cmd, config)
-        const opts = { ...config, logger }
+        let logger = createLogger(cmd, config)
+        let opts = { ...config, logger }
 
-        const pipeline = createPipeline(pipes, scripts, cmd.concurrent || false)
+        let pipeline = createPipeline(pipes, scripts, cmd.concurrent || false)
 
-        runPipeline(pipeline(opts))
-        .then(() => {
-            process.exit(0)
-        })
-        .catch((error) => {
-            console.error('Error', error)
-            process.exit(1)
+        of(cmd)
+        .pipe(pipeline(opts))
+        .subscribe({
+            next: () => {},
+            error: (e) => {
+                console.error('Error', e)
+                process.exit(1)
+            },
+            complete: () => {
+                console.log('Pipeline completed')
+                process.exit(0)
+            },
         })
     })
 
 
 function createLogger(cmd: { raw?: boolean, log?: LogLevel }, config: { log?: LogOptions }) {
-    const logConfig = config.log || {}
-    const opts = {
+    let logConfig = config.log || {}
+    let opts = {
         ...logConfig,
         raw: cmd.raw || logConfig.raw,
         level: cmd.log || logConfig.level }
@@ -48,15 +50,15 @@ function createLogger(cmd: { raw?: boolean, log?: LogLevel }, config: { log?: Lo
 }
 
 function getScriptsDescription(pipes: Pipes): string {
-    const pad = ''.padStart(22)
+    let pad = ''.padStart(22)
 
-    const namedScripts = pipes.map(x => x.name).filter(notNullOrUndefined)
-    const availableScripts = namedScripts.length === 0 ? [] : [
+    let namedScripts = pipes.map(x => x.name).filter(notNullOrUndefined)
+    let availableScripts = namedScripts.length === 0 ? [] : [
         'Available scripts are:',
-        namedScripts.map(x => `* ${x}`),
+        ...namedScripts.map(x => `* ${x}`),
     ]
 
-    const lines = [
+    let lines = [
         'Names of the scripts to run.',
         'If none specified, all scripts will run [--concurrent]ly (by default).',
         ...availableScripts,

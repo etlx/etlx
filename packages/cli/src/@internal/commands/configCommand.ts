@@ -1,4 +1,5 @@
 import convict from 'convict'
+import commander from 'commander'
 import { formatDocs, getDocs } from '../config/docs'
 import { validateConfig, loadConfigIfExists } from '../config'
 
@@ -8,7 +9,7 @@ ${pad}* doc - show config documentation
 ${pad}* validate - make sure your configuration is valid
 ${pad}* show - show current configuration`
 
-export const configCommand = (cli: any, config: convict.Config<any>) => cli
+export const configCommand = (config: convict.Config<any>) => (cli: commander.Command) => cli
     .command('config <command>')
     .description('Manage configuration', { command: configHelpString })
     .option('-c|--config [path]', 'Path to config file')

@@ -13,6 +13,7 @@
         "no-increment-decrement": false,
         "max-line-length": false,
         "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
-        "no-consecutive-blank-lines": false
+        "no-consecutive-blank-lines": false,
+        "prefer-const": false
     }
 }

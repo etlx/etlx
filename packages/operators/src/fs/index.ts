@@ -1,2 +1,7 @@
 export * from './ls'
 export * from './readFile'
+export * from './exists'
+export * from './lstat'
+export * from './fromFileStream'
+export * from './streamIntoFile'
+export * from './writeFile'

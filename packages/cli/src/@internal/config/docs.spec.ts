@@ -7,9 +7,9 @@ const inline = (str: string) => str
 
 describe('formatDocs', () => {
     it('can format docs', () => {
-        const expected = '## test (TEST) description * format: string * required: false * default: 42'
+        let expected = '## test (TEST) description * format: string * required: false * default: 42'
 
-        const actual = formatDocs([{
+        let actual = formatDocs([{
             name: 'test',
             doc: 'description',
             format: 'string',

@@ -14,15 +14,15 @@ export const configureLogging = (opts: LogOptions) => {
         return nullLoggerFactory
     }
 
-    const pretty = opts.raw !== true
-    const options: pino.LoggerOptions = {
+    let pretty = opts.raw !== true
+    let options: pino.LoggerOptions = {
         prettyPrint: pretty,
         timestamp: pretty ? false : undefined,
         base: null,
         level: opts.level || 'info',
     }
 
-    const logger = pino(options)
+    let logger = pino(options)
 
     return createLoggerFactory(({ name, msg, level }) => {
         switch (level) {

@@ -1,13 +1,13 @@
 import { of } from 'rxjs'
-import { pipeIf } from './pipeIf'
+import { choose } from './choose'
 import { map } from 'rxjs/operators'
 
-describe('pipeIf', () => {
+describe('choose', () => {
     it('single operator, true condition', async () => {
         const source = of(41)
 
         const expected = 42
-        const actual = await source.pipe(pipeIf(true, map(x => x + 1))).toPromise()
+        const actual = await source.pipe(choose(true, map(x => x + 1))).toPromise()
 
         expect(actual).toEqual(expected)
 
@@ -17,7 +17,7 @@ describe('pipeIf', () => {
         const source = of(42)
 
         const expected = 42
-        const actual = await source.pipe(pipeIf(false, map(x => x + 1))).toPromise()
+        const actual = await source.pipe(choose(false, map(x => x + 1))).toPromise()
 
         expect(actual).toEqual(expected)
     })
@@ -26,7 +26,7 @@ describe('pipeIf', () => {
         const source = of(41)
 
         const expected = 42
-        const actual = await source.pipe(pipeIf(true, map(x => x + 1), map(x => x - 1))).toPromise()
+        const actual = await source.pipe(choose(true, map(x => x + 1), map(x => x - 1))).toPromise()
 
         expect(actual).toEqual(expected)
 
@@ -36,7 +36,7 @@ describe('pipeIf', () => {
         const source = of(43)
 
         const expected = 42
-        const actual = await source.pipe(pipeIf(false, map(x => x + 1), map(x => x - 1))).toPromise()
+        const actual = await source.pipe(choose(false, map(x => x + 1), map(x => x - 1))).toPromise()
 
         expect(actual).toEqual(expected)
     })
@@ -45,7 +45,7 @@ describe('pipeIf', () => {
         const source = of(42)
 
         const expected = '42'
-        const actual = await source.pipe(pipeIf(false, map(x => x + 1), map(x => x.toString(10)))).toPromise()
+        const actual = await source.pipe(choose(false, map(x => x + 1), map(x => x.toString(10)))).toPromise()
 
         expect(actual).toEqual(expected)
     })

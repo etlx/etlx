@@ -5,13 +5,23 @@ import { configCommand } from '../commands/configCommand'
 import { cliInfo } from '../commands/root'
 import { runCommand } from '../commands/runCommand'
 import { ConfigurationBuilder, createConfigBuilder } from './configuration'
+import { isNullOrUndefined } from '../utils'
 
+
+export type CliCommand = (cli: commander.Command) => commander.Command
+
+type EtlxBuilderContext = {
+    pipes: Pipes,
+    configuration: ConfigurationBuilder,
+    commands: CliCommand[],
+}
 
 export interface EtlxBuilder {
     pipe(pipe: EtlPipe, name?: string): EtlxBuilder,
     pipe(pipes: EtlPipe[]): EtlxBuilder,
     pipe(pipes: { [name: string]: EtlPipe }): EtlxBuilder,
     configure(cb: (x: ConfigurationBuilder) => ConfigurationBuilder): EtlxBuilder,
+    command(...cmd: CliCommand[]): EtlxBuilder,
     build(): { run: (argv?: string[]) => void },
 }
 
@@ -19,13 +29,8 @@ export function etlx(): EtlxBuilder {
     return etlxBuilder({
         pipes: [],
         configuration: createConfigBuilder(),
+        commands: [],
     })
-}
-
-
-type EtlxBuilderContext = {
-    pipes: Pipes,
-    configuration: ConfigurationBuilder,
 }
 
 function etlxBuilder(context: EtlxBuilderContext): EtlxBuilder {
@@ -34,7 +39,18 @@ function etlxBuilder(context: EtlxBuilderContext): EtlxBuilder {
             ...context,
             configuration: configure(context.configuration),
         }),
-        pipe: (etl: EtlPipe | EtlPipe[] | { [name: string]: EtlPipe}, name?: string) => {
+        command: (...commands) => {
+            commands.forEach((command) => {
+                if (isNullOrUndefined(command) || typeof command !== 'function') {
+                    throw new Error(`Unable to add command - function is expected, but got ${typeof command}`)
+                }
+            })
+            return etlxBuilder({
+                ...context,
+                commands: [...context.commands, ...commands],
+            })
+        },
+        pipe: (etl: EtlPipe | EtlPipe[] | { [name: string]: EtlPipe }, name?: string) => {
             if (Array.isArray(etl)) {
                 return etlxBuilder({
                     ...context,
@@ -67,24 +83,42 @@ function etlxBuilder(context: EtlxBuilderContext): EtlxBuilder {
 
             throw new Error(`Unexpected pipe type. [Array], [Object] or [Function] is expected, but got ${typeof etl}`)
         },
-        build() {
-            const config = context.configuration.build()
+        build: () => {
+            let config = context.configuration.build()
 
-            const cli = new commander.Command()
-            cliInfo(cli)
-            configCommand(cli, config)
-            runCommand(cli, config.getProperties(), context.pipes)
+            let cli = pipeCommands(
+                cliInfo(),
+                configCommand(config),
+                runCommand(config.getProperties(), context.pipes),
+                ...context.commands,
+            )
 
-
-            const run = (argv: string[] = process.argv) => {
-                cli.parse(argv)
-
-                if (cli.args.length === 0) {
-                    cli.help()
-                }
-            }
-
-            return { run }
+            return etlxRunner(cli(new commander.Command()))
         },
     }
+}
+
+
+const NODE_MIN_ARGS = 2
+function etlxRunner(cli: commander.Command) {
+    let run = (argv: string[] = process.argv) => {
+        cli.parse(argv)
+
+        if (argv.length <= NODE_MIN_ARGS) {
+            cli.outputHelp()
+            process.exitCode = 1
+        }
+    }
+
+    return { run }
+}
+
+function pipeCommands(...fns: CliCommand[]): CliCommand {
+    return (init: commander.Command) => fns.reduce(
+        (cli, command) => {
+            command(cli)
+            return cli
+        },
+        init,
+    )
 }
