@@ -1,28 +1,48 @@
-import { OperatorFunction, of, merge, concat, Observable } from 'rxjs'
+import { merge, concat, Observable } from 'rxjs'
 import { notNullOrUndefined } from '../utils'
 
-export type EtlPipe = (config: any) => OperatorFunction<any, any>
+type FullPipe = (config: any) => ($: Observable<any>) => Observable<any>
 
-export type Pipes = Array<{
+export type EtlPipe =
+    | Observable<any>
+    | ((config: any) => Observable<any>)
+    | FullPipe
+
+export type NamedPipe = {
     name?: string,
     pipe: EtlPipe,
-}>
+}
 
-export function createPipeline(
+export type Pipes = Array<NamedPipe>
+
+export const createPipeline = (
     pipes: Pipes,
     scripts: string[],
     concurrent: boolean,
-): EtlPipe {
+): FullPipe => {
+    let combine = concurrent ? merge : concat
     let filtered = scripts.length === 0
         ? pipes
         : scripts.map(name => pipes.find(x => x.name === name)).filter(notNullOrUndefined)
 
-    let combine = concurrent ? merge : concat
+    return (config: any) => ($: Observable<any>) => combine(...filtered.map(({ pipe }) => {
+        if (pipe instanceof Observable) {
+            return pipe
+        }
 
-    return (config: any) =>
-        (stream: Observable<void>) =>
-            combine(...filtered.map(etl => etl.pipe(config)(stream)))
+        let result = pipe(config)
+        if (result instanceof Observable) {
+            return result
+        }
+
+        if (typeof result === 'function') {
+            return result($)
+        }
+
+        throw new Error('ETL operator type is invalid. Expected of of (config -> observable -> observable), (config -> observable) or (observable)')
+    }))
 }
+
 
 export function isScriptsValid(pipes: Pipes, scripts: string[]) {
     let pipesKeys = pipes.map(x => x.name).filter(notNullOrUndefined)
