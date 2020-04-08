@@ -56,7 +56,7 @@ function etlxBuilder(context: EtlxBuilderContext): EtlxBuilder {
                     ...context,
                     pipes: [
                         ...context.pipes,
-                        ...etl.map(pipe => ({ pipe }))
+                        ...etl.map(pipe => ({ pipe })),
                     ],
                 })
             }
