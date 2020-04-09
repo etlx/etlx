@@ -1,10 +1,14 @@
 import fs from 'fs'
-import convict from 'convict'
+import { SchemaObj, Config } from 'convict'
 import { flatten } from '../utils'
 
-const throwIfEmpty = null
+export const REQUIRED = null
 
-export function validateConfig(config: convict.Config<any>, suppresWarnings?: boolean) {
+export type Schema<T = any> = {
+    [P in keyof T]?: Schema<T[P]> | SchemaObj<T[P]>
+}
+
+export function validateConfig(config: Config<any>, suppresWarnings?: boolean) {
     config.validate({
         output: suppresWarnings ? () => {} : undefined,
     } as any)
@@ -17,8 +21,18 @@ export function validateConfig(config: convict.Config<any>, suppresWarnings?: bo
     }
 }
 
+export function createSchema<T>(schema: Schema<T>): Schema<T> {
+    return schema as any
+}
+
+export function loadConfigIfExists(config: Config<any>, filepath: string) {
+    if (fs.existsSync(filepath)) {
+        config.loadFile(filepath)
+    }
+}
+
 function validateConfigValue(obj: any, property?: string): string[] {
-    if (obj === throwIfEmpty) {
+    if (obj === REQUIRED) {
         return property === undefined ? [] : [property]
     } else if (typeof obj === 'object') {
         let arrays = Object.entries(obj).map(([key, value]) => {
@@ -29,15 +43,5 @@ function validateConfigValue(obj: any, property?: string): string[] {
         return flatten(arrays)
     } else {
         return []
-    }
-}
-
-export function createSchema<T>(schema: convict.Schema<T>): convict.Schema<T> {
-    return schema
-}
-
-export function loadConfigIfExists(config: convict.Config<any>, filepath: string) {
-    if (fs.existsSync(filepath)) {
-        config.loadFile(filepath)
     }
 }

@@ -1,1 +1,1 @@
-export { createSchema } from './@internal/config/index'
+export { createSchema, Schema, REQUIRED } from './@internal/config/index'

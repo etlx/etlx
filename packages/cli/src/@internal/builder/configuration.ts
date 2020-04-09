@@ -1,18 +1,18 @@
 import convict from 'convict'
-import { validateConfig } from '../config'
+import { validateConfig, Schema } from '../config'
 
 type ConfigBuildOptions = {
     suppressWarnings: boolean,
     paths: string[],
-    schemes: convict.Schema<any>[],
+    schemes: Schema<any>[],
     objects: any[],
 }
 
 export interface ConfigurationBuilder {
+    addSchema<A = unknown>(schema: Schema<A>): ConfigurationBuilder,
+    addObject(config: any): ConfigurationBuilder,
+    addFile(filepath: string): ConfigurationBuilder,
     warnings(enabled: boolean): ConfigurationBuilder,
-    addSchema(...configSchemes: convict.Schema<any>[]): ConfigurationBuilder,
-    addObject(...configs: { [key: string]: any }[]): ConfigurationBuilder,
-    addFile(...paths: string[]): ConfigurationBuilder,
     build(): convict.Config<any>,
 }
 
@@ -27,17 +27,17 @@ export function createConfigBuilder(): ConfigurationBuilder {
 
 function configBuilder(opts: ConfigBuildOptions): ConfigurationBuilder {
     return {
-        addSchema: (...configSchemes: convict.Schema<any>[]) => configBuilder({
+        addSchema: (schema: Schema) => configBuilder({
             ...opts,
-            schemes: [...opts.schemes, ...configSchemes],
+            schemes: [...opts.schemes, schema],
         }),
-        addFile: (...paths: string[]) => configBuilder({
+        addFile: (filepath: string) => configBuilder({
             ...opts,
-            paths: [...opts.paths, ...paths],
+            paths: [...opts.paths, filepath],
         }),
-        addObject: (...configs: any[]) => configBuilder({
+        addObject: (config: any) => configBuilder({
             ...opts,
-            objects: [...opts.objects, ...configs],
+            objects: [...opts.objects, config],
         }),
         warnings: (enabled: boolean) =>  configBuilder({
             ...opts,
