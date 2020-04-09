@@ -50,13 +50,10 @@ function createLogger(cmd: { raw?: boolean, log?: LogLevel }, config: { log?: Lo
 }
 
 function getScriptsDescription(pipes: Pipes): string {
-    let pad = ''.padStart(22)
-
     let namedScripts = pipes.map(x => x.name).filter(notNullOrUndefined)
-    let availableScripts = namedScripts.length === 0 ? [] : [
-        'Available scripts are:',
-        ...namedScripts.map(x => `* ${x}`),
-    ]
+    let availableScripts = namedScripts.length === 0
+        ? []
+        : ['Available scripts are:', ...namedScripts.map(x => `  * ${x}`)]
 
     let lines = [
         'Names of the scripts to run.',
@@ -64,5 +61,5 @@ function getScriptsDescription(pipes: Pipes): string {
         ...availableScripts,
     ]
 
-    return lines.join(`\n${pad}`)
+    return lines.join('\n')
 }
