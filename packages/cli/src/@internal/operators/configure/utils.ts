@@ -1,7 +1,7 @@
 import fs from 'fs'
 import convict, { Config } from 'convict'
-import { Configure, ConfigurationOptions, REQUIRED } from './types'
-import { flatten } from '../utils'
+import { ConfigurationOptions, REQUIRED } from './types'
+import { flatten, pipeConfigure, Configure } from '../../utils'
 
 export function loadConfigIfExists(config: Config<any>, filepath: string) {
     if (fs.existsSync(filepath)) {
@@ -9,9 +9,7 @@ export function loadConfigIfExists(config: Config<any>, filepath: string) {
     }
 }
 
-const pipe = <A>(fns: Array<(a: A) => A>) => (init: A) => fns.reduce((x, f) => f(x), init)
-
-export function buildConfiguration(fns: Configure[]): convict.Config<any> {
+export function buildConfiguration(fns: Configure<ConfigurationOptions>[]): convict.Config<any> {
     let init: ConfigurationOptions = {
         paths: [],
         objects: [],
@@ -20,7 +18,7 @@ export function buildConfiguration(fns: Configure[]): convict.Config<any> {
         parsers: [],
     }
 
-    let opts = pipe(fns)(init)
+    let opts = pipeConfigure(fns)(init)
     let schema = Object.assign({}, ...opts.schemes)
     let config = convict(schema)
 

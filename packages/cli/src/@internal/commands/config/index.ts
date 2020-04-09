@@ -1,7 +1,8 @@
 import convict from 'convict'
 import commander from 'commander'
-import { formatDocs, getDocs } from '../config/docs'
-import { validateConfig, loadConfigIfExists } from '../config/utils'
+
+import { validateConfig, loadConfigIfExists } from '../../operators/configure/utils'
+import { formatDocs, getDocs } from './docs'
 
 export const configCommand = (config: convict.Config<any>) => (cli: commander.Command) => cli
     .command('config <command>')

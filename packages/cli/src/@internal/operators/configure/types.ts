@@ -18,5 +18,3 @@ export type ConfigurationOptions = {
     objects: any[],
     parsers: FileParser[],
 }
-
-export type Configure = (x: ConfigurationOptions) => ConfigurationOptions

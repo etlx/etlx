@@ -11,3 +11,8 @@ export function notNullOrUndefined<T>(value: T | null |undefined): value is T {
 export function flatten<T>(source: T[][]) {
     return new Array<T>().concat(...source)
 }
+
+export type Configure<T> = (x: T) => T
+export function pipeConfigure<T>(fns: Array<Configure<T>>) {
+    return (init: T) => fns.reduce((x, f) => f(x), init)
+}

@@ -1,14 +1,15 @@
 import { interval, of, Observable } from 'rxjs'
 import { mergeMap, take, toArray, map } from 'rxjs/operators'
-import { createPipeline, Pipes, EtlPipe } from '../pipe'
+import { createPipeline } from './utils'
+import { EtlxOperator, InternalOperator } from '../../types'
 
 describe('createPipeline', () => {
-    let sourceA: EtlPipe = () => s => s.pipe(
+    let sourceA: EtlxOperator = () => s => s.pipe(
         mergeMap(() => interval(10).pipe(take(3))),
         map(x => `A${x}`),
     )
 
-    let sourceB: EtlPipe = () => s => s.pipe(
+    let sourceB: EtlxOperator = () => s => s.pipe(
         mergeMap(() => interval(12).pipe(take(3))),
         map(x => `B${x}`),
     )
@@ -58,24 +59,6 @@ describe('createPipeline', () => {
         expect(actual).toEqual(expected)
     })
 
-    it('short-form operator', async () => {
-        let $ = testSequential({ A: () => of(42) })
-
-        let expected = [42]
-        let actual = await $.pipe(toArray()).toPromise()
-
-        expect(actual).toEqual(expected)
-    })
-
-    it('observable operator', async () => {
-        let $ = testSequential({ A: of(42) })
-
-        let expected = [42]
-        let actual = await $.pipe(toArray()).toPromise()
-
-        expect(actual).toEqual(expected)
-    })
-
     it('throw on invalid operator', () => {
         let actual = () => testSequential({ A: 42 as any })
 
@@ -84,7 +67,7 @@ describe('createPipeline', () => {
 })
 
 
-function testSequential<T = any>(pipes: { [name: string]: EtlPipe }, filter?: string[]): Observable<T> {
+function testSequential<T = any>(pipes: { [name: string]: EtlxOperator }, filter?: string[]): Observable<T> {
     let pipeline = mapObjPipesToArray(pipes)
 
     let operator = createPipeline(pipeline, filter || [], false)({})
@@ -92,7 +75,7 @@ function testSequential<T = any>(pipes: { [name: string]: EtlPipe }, filter?: st
     return of(undefined).pipe(operator)
 }
 
-function testConcurrent<T = any>(pipes: { [name: string]: EtlPipe }, filter?: string[]): Observable<T> {
+function testConcurrent<T = any>(pipes: { [name: string]: EtlxOperator }, filter?: string[]): Observable<T> {
     let pipeline = mapObjPipesToArray(pipes)
 
     let operator = createPipeline(pipeline, filter || [], true)({})
@@ -100,6 +83,6 @@ function testConcurrent<T = any>(pipes: { [name: string]: EtlPipe }, filter?: st
     return of(undefined).pipe(operator)
 }
 
-function mapObjPipesToArray(pipes: { [name: string]: EtlPipe }): Pipes {
-    return Object.entries(pipes).map(([name, pipe]) => ({ name, pipe }))
+function mapObjPipesToArray(pipes: { [name: string]: EtlxOperator }): InternalOperator[] {
+    return Object.entries(pipes).map(([name, observable]) => ({ name, observable }))
 }

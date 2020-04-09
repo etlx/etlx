@@ -1,19 +1,23 @@
-import { Pipes, isScriptsValid, createPipeline } from '../pipe'
-import { LogLevel } from '../log/types'
-import { notNullOrUndefined } from '../utils'
-import { configureLogging, LogOptions } from '../log/configure'
-import { of } from 'rxjs'
 import commander from 'commander'
+import { of } from 'rxjs'
 
-export const runCommand = (config: any, pipes: Pipes) => (cli: commander.Command) => cli
+import { InternalOperator } from '../../types'
+import { LogLevel } from '../../log/types'
+import { configureLogging, LogOptions } from '../../log/configure'
+import { notNullOrUndefined } from '../../utils'
+
+import { isScriptsValid, createPipeline } from './utils'
+
+
+export const runCommand = (config: any, operators: InternalOperator[]) => (cli: commander.Command) => cli
     .command('run [scripts...]')
-    .description('Run specified ETL script', { scripts: getScriptsDescription(pipes) })
+    .description('Run specified scripts', { scripts: getScriptsDescription(operators) })
     .option('--concurrent', 'True if all scripts should run in concurrently.', true)
     .option('-l|--log <level>', 'Minimum level of log message to be printed. Possible values are: debug, info, warn, error, silent')
     .option('--raw', 'If set, logs are printed in Pino format suitable for further processing')
     .allowUnknownOption(true)
     .action((scripts: any, cmd: any) => {
-        if (scripts.length > 0 && !isScriptsValid(pipes, scripts)) {
+        if (scripts.length > 0 && !isScriptsValid(operators, scripts)) {
             cmd.help()
             process.exit(1)
         }
@@ -21,7 +25,7 @@ export const runCommand = (config: any, pipes: Pipes) => (cli: commander.Command
         let logger = createLogger(cmd, config)
         let opts = { ...config, logger }
 
-        let pipeline = createPipeline(pipes, scripts, cmd.concurrent || false)
+        let pipeline = createPipeline(operators, scripts, cmd.concurrent || false)
 
         of(cmd)
         .pipe(pipeline(opts))
@@ -32,7 +36,6 @@ export const runCommand = (config: any, pipes: Pipes) => (cli: commander.Command
                 process.exit(1)
             },
             complete: () => {
-                console.log('Pipeline completed')
                 process.exit(0)
             },
         })
@@ -49,8 +52,8 @@ function createLogger(cmd: { raw?: boolean, log?: LogLevel }, config: { log?: Lo
     return configureLogging(opts)
 }
 
-function getScriptsDescription(pipes: Pipes): string {
-    let namedScripts = pipes.map(x => x.name).filter(notNullOrUndefined)
+function getScriptsDescription(operators: Array<InternalOperator>): string {
+    let namedScripts = operators.map(x => x.name).filter(notNullOrUndefined)
     let availableScripts = namedScripts.length === 0
         ? []
         : ['Available scripts are:', ...namedScripts.map(x => `  * ${x}`)]

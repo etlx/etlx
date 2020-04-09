@@ -2,5 +2,7 @@ import { polyfill } from './@internal/polyfills'
 
 polyfill(global)
 
-export { EtlPipe } from './@internal/pipe'
-export { etlx } from './@internal/builder/etlx'
+export { etlx } from './@internal/etlx'
+export { EtlxCliCommand, EtlxOperator, EtlxOptions } from './@internal/types'
+
+export * from './@internal/operators'
