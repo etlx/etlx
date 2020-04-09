@@ -67,7 +67,8 @@ function buildConfig(opts: ConfigBuildOptions): convict.Config<any> {
 
     convict.addParser(opts.parsers)
 
-    config.loadFile(opts.paths)
+    let files = opts.paths.filter(x => fs.existsSync(x))
+    config.loadFile(files)
 
     opts.objects.forEach(x => config.load(x))
 
