@@ -2,7 +2,7 @@ import fs from 'fs'
 import { SchemaObj, Config } from 'convict'
 import { flatten } from '../utils'
 
-export const REQUIRED = null
+export const REQUIRED: any = null
 
 export type Schema<T = any> = {
     [P in keyof T]?: Schema<T[P]> | SchemaObj<T[P]>
