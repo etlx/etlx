@@ -1,18 +1,18 @@
 import commander from 'commander'
 import { Pipes, EtlPipe } from '../pipe'
-
 import { configCommand } from '../commands/configCommand'
 import { cliInfo } from '../commands/root'
 import { runCommand } from '../commands/runCommand'
-import { ConfigurationBuilder, createConfigBuilder } from './configuration'
+import {  Configure } from '../config/types'
 import { isNullOrUndefined } from '../utils'
+import { buildConfiguration } from '../config/utils'
 
 
 export type CliCommand = (cli: commander.Command) => commander.Command
 
 type EtlxBuilderContext = {
     pipes: Pipes,
-    configuration: ConfigurationBuilder,
+    configurations: Configure[],
     commands: CliCommand[],
 }
 
@@ -20,7 +20,7 @@ export interface EtlxBuilder {
     pipe(pipe: EtlPipe, name?: string): EtlxBuilder,
     pipe(pipes: EtlPipe[]): EtlxBuilder,
     pipe(pipes: { [name: string]: EtlPipe }): EtlxBuilder,
-    configure(cb: (x: ConfigurationBuilder) => ConfigurationBuilder): EtlxBuilder,
+    configure(...configure: Configure[]): EtlxBuilder,
     command(...cmd: CliCommand[]): EtlxBuilder,
     build(): { run: (argv?: string[]) => void },
 }
@@ -28,16 +28,16 @@ export interface EtlxBuilder {
 export function etlx(): EtlxBuilder {
     return etlxBuilder({
         pipes: [],
-        configuration: createConfigBuilder(),
+        configurations: [],
         commands: [],
     })
 }
 
 function etlxBuilder(context: EtlxBuilderContext): EtlxBuilder {
     return {
-        configure: configure => etlxBuilder({
+        configure: (...configurations) => etlxBuilder({
             ...context,
-            configuration: configure(context.configuration),
+            configurations: [...context.configurations, ...configurations],
         }),
         command: (...commands) => {
             commands.forEach((command) => {
@@ -84,7 +84,7 @@ function etlxBuilder(context: EtlxBuilderContext): EtlxBuilder {
             throw new Error(`Unexpected pipe type. [Array], [Object] or [Function] is expected, but got ${typeof etl}`)
         },
         build: () => {
-            let config = context.configuration.build()
+            let config = buildConfiguration(context.configurations)
 
             let cli = pipeCommands(
                 cliInfo(),

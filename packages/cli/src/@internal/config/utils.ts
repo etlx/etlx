@@ -1,11 +1,37 @@
 import fs from 'fs'
-import { SchemaObj, Config } from 'convict'
+import convict, { Config } from 'convict'
+import { Configure, ConfigurationOptions, REQUIRED } from './types'
 import { flatten } from '../utils'
 
-export const REQUIRED: any = null
+export function loadConfigIfExists(config: Config<any>, filepath: string) {
+    if (fs.existsSync(filepath)) {
+        config.loadFile(filepath)
+    }
+}
 
-export type Schema<T = any> = {
-    [P in keyof T]?: Schema<T[P]> | SchemaObj<T[P]>
+const pipe = <A>(fns: Array<(a: A) => A>) => (init: A) => fns.reduce((x, f) => f(x), init)
+
+export function buildConfiguration(fns: Configure[]): convict.Config<any> {
+    let init: ConfigurationOptions = {
+        paths: [],
+        objects: [],
+        schemes: [],
+        suppressWarnings: true,
+        parsers: [],
+    }
+
+    let opts = pipe(fns)(init)
+    let schema = Object.assign({}, ...opts.schemes)
+    let config = convict(schema)
+
+    convict.addParser(opts.parsers)
+
+    opts.paths.forEach(filepath => loadConfigIfExists(config, filepath))
+    opts.objects.forEach(x => config.load(x))
+
+    validateConfig(config, opts.suppressWarnings)
+
+    return config
 }
 
 export function validateConfig(config: Config<any>, suppresWarnings?: boolean) {
@@ -18,16 +44,6 @@ export function validateConfig(config: Config<any>, suppresWarnings?: boolean) {
         let errors = missingProps.map(x => `Config property '${x}' is required, but missing`).join('\n* ')
 
         throw new Error(`Config is invalid\n* ${errors}\n`)
-    }
-}
-
-export function createSchema<T>(schema: Schema<T>): Schema<T> {
-    return schema as any
-}
-
-export function loadConfigIfExists(config: Config<any>, filepath: string) {
-    if (fs.existsSync(filepath)) {
-        config.loadFile(filepath)
     }
 }
 
