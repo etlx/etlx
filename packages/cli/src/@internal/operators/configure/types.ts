@@ -17,4 +17,5 @@ export type ConfigurationOptions = {
     schemes: Schema<any>[],
     objects: any[],
     parsers: FileParser[],
+    overrides: Array<(config: any) => any>,
 }

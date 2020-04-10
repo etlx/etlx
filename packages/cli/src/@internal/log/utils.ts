@@ -1,6 +1,6 @@
 import { LoggerFactory, LogLevel } from './types'
 
-type LogFn = (opts: {name: string, msg: string, level: LogLevel}) => void
+type LogFn = (opts: { name: string, msg: string, level: LogLevel }) => void
 
 export function createLoggerFactory(log: LogFn): LoggerFactory {
     return (name: string) => ({

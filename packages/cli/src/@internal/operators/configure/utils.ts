@@ -13,19 +13,22 @@ export function buildConfiguration(fns: Configure<ConfigurationOptions>[]): conv
     let init: ConfigurationOptions = {
         paths: [],
         objects: [],
+        overrides: [],
         schemes: [],
         suppressWarnings: true,
         parsers: [],
     }
 
     let opts = pipeConfigure(fns)(init)
-    let schema = Object.assign({}, ...opts.schemes)
-    let config = convict(schema)
 
     convict.addParser(opts.parsers)
 
+    let schema = Object.assign({}, ...opts.schemes)
+    let config = convict(schema)
+
     opts.paths.forEach(filepath => loadConfigIfExists(config, filepath))
     opts.objects.forEach(x => config.load(x))
+    opts.overrides.forEach(f => config.load(f(config.getProperties())))
 
     validateConfig(config, opts.suppressWarnings)
 

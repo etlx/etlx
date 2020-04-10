@@ -1,17 +1,22 @@
 import pino from 'pino'
-import { LogLevel } from './types'
-import { createLoggerFactory } from './createLoggerFactory'
 import { assertNever } from '../utils'
-import { nullLoggerFactory } from './nullLogger'
 
-export type LogOptions = {
-    level?: LogLevel | 'silent',
-    raw?: boolean,
+import { LoggerOptions, Logger } from './types'
+import { createLoggerFactory } from './utils'
+
+
+const empty = () => {}
+const nullLogger: Logger = {
+    debug: empty,
+    info: empty,
+    warn: empty,
+    error: empty,
 }
 
-export const configureLogging = (opts: LogOptions) => {
+
+export const createLogger = (opts: LoggerOptions) => {
     if (opts.level === 'silent') {
-        return nullLoggerFactory
+        return () => nullLogger
     }
 
     let pretty = opts.raw !== true
@@ -43,22 +48,4 @@ export const configureLogging = (opts: LogOptions) => {
                 break
         }
     })
-}
-
-
-export const logConfigSchema = {
-    log: {
-        level: {
-            doc: 'Minimum level of log message to be printed. Possible values are: debug, info, warn, error, silent',
-            default: 'info',
-            env: 'LOG_LEVEL',
-            format: '*',
-        },
-        raw: {
-            doc: 'If set, logs are printed in Pino format suitable for further processing',
-            default: 'false',
-            env: 'LOG_RAW',
-            format: '*',
-        },
-    },
 }
