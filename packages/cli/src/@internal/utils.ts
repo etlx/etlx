@@ -14,5 +14,13 @@ export function flatten<T>(source: T[][]) {
 
 export type Configure<T> = (x: T) => T
 export function pipeConfigure<T>(fns: Array<Configure<T>>) {
-    return (init: T) => fns.reduce((x, f) => f(x), init)
+    return (init: T) => fns.reduce(call, init)
+}
+
+function call<A, B>(x: A, f: (a: A) => B): B {
+    if (typeof f === 'function') {
+        return f(x)
+    } else {
+        throw new TypeError('Unable to configure - some configuration items are not callable')
+    }
 }

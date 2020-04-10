@@ -1,6 +1,6 @@
 import fs from 'fs'
 import convict, { Config } from 'convict'
-import { ConfigurationOptions, REQUIRED } from './types'
+import { ConfigurationOptions, REQUIRED, ConfigurationError } from './types'
 import { flatten, pipeConfigure, Configure } from '../../utils'
 
 export function loadConfigIfExists(config: Config<any>, filepath: string) {
@@ -31,14 +31,16 @@ export function buildConfiguration(fns: Configure<ConfigurationOptions>[]): conv
     opts.overrides.forEach(f => config.load(f(config.getProperties())))
 
     validateConfig(config, opts.suppressWarnings)
-
     return config
 }
 
 export function validateConfig(config: Config<any>, suppresWarnings?: boolean) {
-    config.validate({
-        output: suppresWarnings ? () => {} : undefined,
-    } as any)
+    try {
+        let output = suppresWarnings ? () => {} : undefined
+        config.validate({ output } as any)
+    } catch (e) {
+        throw new ConfigurationError(e)
+    }
 
     let missingProps = validateConfigValue(config.getProperties())
     if (missingProps.length > 0) {

@@ -19,3 +19,18 @@ export type ConfigurationOptions = {
     parsers: FileParser[],
     overrides: Array<(config: any) => any>,
 }
+
+export class ConfigurationError extends Error {
+    constructor(e?: string | Error) {
+        let msg =
+            e === undefined ? undefined
+            : e instanceof Error ? e.message
+            : e.toString()
+
+        super(msg)
+    }
+
+    toString() {
+        return `Invalid configuration - ${this.message}`
+    }
+}
