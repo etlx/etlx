@@ -23,7 +23,7 @@ export const etlx = (...configurations: Configure<EtlxOptions>[]) => {
         runCommand(config.getProperties(), context.observables),
         ...context.commands,
     ]
-    let cli = pipeConfigure(commands)(new commander.Command())
+    let cli = modify(new commander.Command(), commands)
 
     return etlxRunner(cli)
 }
@@ -39,4 +39,14 @@ function etlxRunner(cli: commander.Command) {
             process.exitCode = 1
         }
     }
+}
+
+function modify<A>(init: A, fns: Array<(a: A) => A>) {
+    return fns.reduce(
+        (x, f) => {
+            f(x)
+            return x
+        },
+        init,
+    )
 }
