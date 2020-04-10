@@ -1,14 +1,13 @@
 import { Observable, of, OperatorFunction } from 'rxjs'
-import { mergeMap, map, tap } from 'rxjs/operators'
+import { mergeMap, map } from 'rxjs/operators'
 import { choose } from '@etlx/operators/core'
 import { minify, stringifyBody, forEachAttribute, inlineImages } from '@etlx/operators/html'
-import { LoggerFactory, getLogger } from '@etlx/operators/utils'
+import { LoggerConfig, log } from '@etlx/operators/log'
 import { formatUrl } from '@etlx/operators/http'
 import { ConfluencePageBody } from './types'
 import { getPageBody, updateBody } from './utils'
 
-export type NormalizeBodyOptions = {
-    logger?: LoggerFactory,
+export type NormalizeBodyOptions = LoggerConfig & {
     confluence: { host: string },
     inlineImages?: boolean,
 }
@@ -36,15 +35,13 @@ const cleanHtml = (opts: NormalizeBodyOptions) => ($: Observable<string>) => $.p
 )
 
 export function normalizeBody<T extends Page>(opts: NormalizeBodyOptions): OperatorFunction<T, T> {
-    const logger = getLogger('confluence', opts.logger)
-
     return $ => $.pipe(
-        tap(() => logger.info('Normalizing page body')),
+        log(opts, 'Normalizing page body', 'confluence'),
         mergeMap(page => of(getPageBody(page)).pipe(
             cleanHtml(opts),
             stringifyBody(),
             map(updateBody(page)),
         )),
-        tap(() => logger.info('Page body normalized')),
+        log(opts, 'Page body normalized', 'confluence'),
     )
 }

@@ -1,7 +1,6 @@
-import { LoggerFactory } from '@etlx/operators/utils'
+import { LoggerConfig } from '@etlx/operators/log'
 
-export type ConfluenceConfig = {
-    logger?: LoggerFactory,
+export type ConfluenceConfig = LoggerConfig & {
     confluence: {
         host: string,
         username: string,

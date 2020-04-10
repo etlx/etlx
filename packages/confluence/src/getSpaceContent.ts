@@ -1,7 +1,8 @@
 import { of, Observable } from 'rxjs'
 import { mergeMap, map } from 'rxjs/operators'
-import { expandWhile, log } from '@etlx/operators'
-import { isNullOrUndefined, Logger } from '@etlx/operators/utils'
+import { expandWhile } from '@etlx/operators'
+import { isNullOrUndefined } from '@etlx/operators/utils'
+import { log, Logger } from '@etlx/operators/log'
 import { fromJsonRequest, FromRequestOptions, authBasic } from '@etlx/operators/http'
 
 import { ConfluencePage, ConfluenceConfig, ConfluencePageExpandable, ConfluencePaginatedResponse } from './types'
@@ -36,7 +37,7 @@ const getSpacePage = (opts: GetSpacePagesOptions) => (spaceKey?: string) => (sta
     }
 
     return of(request).pipe(
-        log(opts.logger, logRequest, 'confluence'),
+        log(opts, logRequest, 'confluence'),
         mergeMap(x => fromJsonRequest<Response>(x)),
     )
 }

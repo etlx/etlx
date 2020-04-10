@@ -1,8 +1,7 @@
-import { from, throwError, Observable } from 'rxjs'
+import { from, throwError } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 import { fromFetch } from 'rxjs/fetch'
-import { LoggerFactory, Logger } from '../utils'
-import { log } from '../core'
+import { log, Logger, LoggerConfig } from '../log'
 import { formatUrl } from './utils'
 import { invalidMediaType, faultyResponse } from './errors'
 
@@ -12,9 +11,8 @@ export type UrlParams = {
     query: { [key: string]: undefined | null | string | number | boolean },
 }
 
-export type FromRequestOptions = RequestInit & {
+export type FromRequestOptions = RequestInit & LoggerConfig & {
     url: string | UrlParams,
-    logger?: LoggerFactory,
 }
 
 const logResponse = (logger: Logger, response: Response) =>
@@ -25,7 +23,7 @@ export function fromRequest(request: FromRequestOptions) {
     let urlString = getUrl(url)
 
     return fromFetch(urlString, init).pipe(
-        log(logger, logResponse, 'http'),
+        log(request, logResponse, 'http'),
     )
 }
 

@@ -1,13 +1,7 @@
-export type Logger = {
-    debug: (msg: string) => void,
-    info: (msg: string) => void,
-    warn: (msg: string) => void,
-    error: (msg: string | Error) => void,
-}
-
-export type LoggerFactory = (name: string) => Logger
-
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
+
+export type Logger = (message: any, level?: LogLevel, name?: string) => void
+
 
 export type LoggerOptions = {
     level?: LogLevel | 'silent',
@@ -16,7 +10,7 @@ export type LoggerOptions = {
 
 export type LoggerConfig = {
     logging?: LoggerOptions,
-    logger: LoggerFactory,
+    logger: Logger,
 }
 export const loggerConfigSchema = {
     logging: {

@@ -1,22 +1,12 @@
 import pino from 'pino'
-import { assertNever } from '../utils'
-
 import { LoggerOptions, Logger } from './types'
-import { createLoggerFactory } from './utils'
 
 
 const empty = () => {}
-const nullLogger: Logger = {
-    debug: empty,
-    info: empty,
-    warn: empty,
-    error: empty,
-}
 
-
-export const createLogger = (opts: LoggerOptions) => {
+export const createLogger = (opts: LoggerOptions): Logger => {
     if (opts.level === 'silent') {
-        return () => nullLogger
+        return empty
     }
 
     let pretty = opts.raw !== true
@@ -29,13 +19,15 @@ export const createLogger = (opts: LoggerOptions) => {
 
     let logger = pino(options)
 
-    return createLoggerFactory(({ name, msg, level }) => {
+    return (message, level, name) => {
+        if (message === null || message === undefined) {
+            return
+        }
+        let msg = message.toString()
+
         switch (level) {
             case 'debug':
                 logger.debug(msg)
-                break
-            case 'info':
-                logger.info(msg)
                 break
             case 'warn':
                 logger.warn(msg)
@@ -44,8 +36,8 @@ export const createLogger = (opts: LoggerOptions) => {
                 logger.error(msg)
                 break
             default:
-                assertNever(level)
+                logger.info(msg)
                 break
         }
-    })
+    }
 }
