@@ -1,5 +1,5 @@
-import { EtlxOperator, EtlxOptions } from '../types'
 import { Observable } from 'rxjs'
+import { EtlxOperator, EtlxOptions } from '../../types'
 
 
 export type EtlxOperatorVariant =

@@ -1,5 +1,5 @@
 import { createLogger as createLogger } from './logger'
-import { ConfigurationOptions } from '../operators/configure/types'
+import { ConfigurationOptions } from '../types'
 import { loggerConfigSchema, LoggerOptions, LoggerConfig } from './types'
 
 export * from './types'

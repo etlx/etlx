@@ -1,2 +1,2 @@
 export * from './@internal/operators/configure/operators'
-export * from './@internal/operators/configure/types'
+export * from './@internal/types'

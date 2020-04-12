@@ -1,7 +1,6 @@
 import commander from 'commander'
-import { EtlxOptions } from './types'
+import { EtlxOptions, ConfigurationError } from './types'
 import { Configure, pipeConfigure } from './utils'
-import { ConfigurationError } from './operators/configure/types'
 import { buildCommands } from './operators/command/utils'
 
 
