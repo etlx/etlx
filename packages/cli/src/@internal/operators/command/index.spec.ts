@@ -1,8 +1,8 @@
 import { WriteStream } from 'tty'
 import commander from 'commander'
-import { etlx } from '../etlx'
-import { command } from './command'
-import { EtlxCliCommand } from '../types'
+import { etlx } from '../../etlx'
+import { command } from '.'
+import { EtlxCliCommand } from '../../types'
 
 const args = (...xs: string[]) => ['node', 'scriptpath', ...xs]
 
@@ -29,8 +29,11 @@ describe('addCommand', () => {
         })
 
 
+
         let sut = etlx(
-            ...testData.map(([x]) => x).map(command),
+            command(
+                ...testData.map(([x]) => x),
+            ),
         )
 
         testData.forEach(([_, f, name]) => {

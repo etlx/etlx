@@ -1,14 +1,16 @@
-import convict from 'convict'
 import commander from 'commander'
 
-import { validateConfig, loadConfigIfExists } from '../../operators/configure/utils'
+import { validateConfig, loadConfigIfExists, buildConfiguration } from '../../../configure/utils'
 import { formatDocs, getDocs } from './docs'
+import { EtlxOptions } from '../../../../types'
 
-export const configCommand = (config: convict.Config<any>) => (cli: commander.Command) => cli
+export const configCommand = () => (cli: commander.Command, ctx: EtlxOptions) => cli
     .command('config <command>')
     .description('Manage configuration', { command: getCommandDescription() })
     .option('-c|--config [path]', 'Path to config file')
     .action((command: any, cmd: any) => {
+        let config = buildConfiguration(ctx.configurations)
+
         switch (command) {
             case 'doc':
                 const docs = formatDocs(getDocs(config))

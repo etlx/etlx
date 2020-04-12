@@ -1,5 +1,5 @@
 import convict from 'convict'
-import { notNullOrUndefined, flatten } from '../../utils'
+import { notNullOrUndefined, flatten } from '../../../../utils'
 
 type DocObject = { name: string, parent?: DocObject }
 type DocProp = {

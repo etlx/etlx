@@ -1,24 +1,29 @@
 import commander from 'commander'
 import { of } from 'rxjs'
 
-import { InternalOperator } from '../../types'
-import { notNullOrUndefined } from '../../utils'
+import { InternalOperator, EtlxOptions } from '../../../../types'
+import { notNullOrUndefined } from '../../../../utils'
 
 import { isScriptsValid, createPipeline } from './utils'
+import { buildConfiguration } from '../../../configure/utils'
 
 
-export const runCommand = (config: any, operators: InternalOperator[]) => (cli: commander.Command) => cli
+export const runCommand = () => (cli: commander.Command, ctx: EtlxOptions) => {
+    let { configurations, observables } = ctx
+    let config = buildConfiguration(configurations).getProperties()
+
+    return cli
     .command('run [scripts...]')
-    .description('Run specified scripts', { scripts: getScriptsDescription(operators) })
+    .description('Run specified scripts', { scripts: getScriptsDescription(ctx.observables) })
     .option('--concurrent', 'True if all scripts should run in concurrently.', true)
     .allowUnknownOption(true)
     .action((scripts: any, cmd: any) => {
-        if (scripts.length > 0 && !isScriptsValid(operators, scripts)) {
+        if (scripts.length > 0 && !isScriptsValid(observables, scripts)) {
             cmd.help()
             process.exit(1)
         }
 
-        let pipeline = createPipeline(operators, scripts, cmd.concurrent || false)
+        let pipeline = createPipeline(observables, scripts, cmd.concurrent || false)
 
         of(cmd)
         .pipe(pipeline(config))
@@ -33,6 +38,7 @@ export const runCommand = (config: any, operators: InternalOperator[]) => (cli: 
             },
         })
     })
+}
 
 function getScriptsDescription(operators: Array<InternalOperator>): string {
     let namedScripts = operators.map(x => x.name).filter(notNullOrUndefined)

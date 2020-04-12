@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs'
 import commander from 'commander'
+import { Observable } from 'rxjs'
 import { Configure } from './utils'
 import { ConfigurationOptions } from './operators/configure/types'
 
@@ -10,7 +10,7 @@ export type InternalOperator = {
     observable: EtlxOperator,
 }
 
-export type EtlxCliCommand = (cli: commander.Command) => commander.Command
+export type EtlxCliCommand = (cli: commander.Command, ctx: EtlxOptions) => commander.Command
 
 export type EtlxOptions = {
     observables: InternalOperator[],

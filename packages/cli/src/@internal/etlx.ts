@@ -1,11 +1,8 @@
 import commander from 'commander'
-import { configCommand } from './commands/config'
-import { cliInfo } from './commands/root'
-import { runCommand } from './commands/run'
-import { Configure, pipeConfigure } from './utils'
-import { buildConfiguration } from './operators/configure/utils'
 import { EtlxOptions } from './types'
+import { Configure, pipeConfigure } from './utils'
 import { ConfigurationError } from './operators/configure/types'
+import { buildCommands } from './operators/command/utils'
 
 
 export const etlx = (...configurations: Configure<EtlxOptions>[]) => {
@@ -17,15 +14,7 @@ export const etlx = (...configurations: Configure<EtlxOptions>[]) => {
 
     let context = pipeConfigure(configurations)(init)
 
-    let config = getConfig(context)
-
-    let commands = [
-        cliInfo(),
-        configCommand(config),
-        runCommand(config.getProperties(), context.observables),
-        ...context.commands,
-    ]
-    let cli = modify(new commander.Command(), commands)
+    let cli = catchConfigurationError(() => buildCommands(context))
 
     return etlxRunner(cli)
 }
@@ -34,7 +23,7 @@ function etlxRunner(cli: commander.Command) {
     const NODE_MIN_ARGS = 2
 
     return (argv: string[] = process.argv) => {
-        cli.parse(argv)
+        catchConfigurationError(() => cli.parse(argv))
 
         if (argv.length <= NODE_MIN_ARGS) {
             cli.outputHelp()
@@ -43,23 +32,9 @@ function etlxRunner(cli: commander.Command) {
     }
 }
 
-function modify<A>(init: A, fns: Array<(a: A) => A>) {
-    return fns.reduce(
-        (x, f) => {
-            if (typeof f === 'function') {
-                f(x)
-                return x
-            } else {
-                throw new TypeError('Unable to configure - all commands must be functions, but some were not')
-            }
-        },
-        init,
-    )
-}
-
-function getConfig(context: EtlxOptions) {
+function catchConfigurationError<T>(f: () => T): T {
     try {
-        return buildConfiguration(context.configurations)
+        return f()
     } catch (e) {
         if (e instanceof ConfigurationError) {
             console.error(e.toString())

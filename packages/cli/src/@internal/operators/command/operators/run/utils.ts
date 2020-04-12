@@ -1,6 +1,6 @@
 import { merge, concat, Observable } from 'rxjs'
-import { notNullOrUndefined } from '../../utils'
-import { InternalOperator, EtlxOperator } from '../../types'
+import { notNullOrUndefined } from '../../../../utils'
+import { InternalOperator, EtlxOperator } from '../../../../types'
 
 export const createPipeline = (
     operators: InternalOperator[],
