@@ -2,53 +2,50 @@ import { WriteStream } from 'tty'
 import commander from 'commander'
 import { etlx } from '../../etlx'
 import { command } from '.'
-import { EtlxCliCommand } from '../../types'
+import { EtlxOptions } from '../../types'
 
 const args = (...xs: string[]) => ['node', 'scriptpath', ...xs]
 
-describe('addCommand', () => {
+describe('command', () => {
     it('add command', () => {
-        let action = jest.fn()
+        let cmd0 = () => new commander.Command()
+        let cmd1 = () => new commander.Command()
 
-        etlx(
-            command(x => x.command('test').action(action)),
-        )(args('test'))
+        let init: EtlxOptions = { commands: [cmd0], configurations: [], observables: [] }
 
-        expect(action).toHaveBeenCalledTimes(1)
+        let actual = command(cmd1)(init)
+
+        let expected: EtlxOptions = {
+            commands: [cmd0, cmd1],
+            configurations: [],
+            observables: [],
+        }
+
+        expect(actual).toEqual(expected)
     })
 
     it('add multiple commands', () => {
-        let commands = ['A', 'B', 'C', 'D']
+        let cmd0 = () => new commander.Command()
+        let cmd1 = () => new commander.Command()
+        let cmd2 = () => new commander.Command()
 
-        let testData: [EtlxCliCommand, jest.Mock, string][] = commands.map((name) => {
-            let mock = jest.fn()
+        let init: EtlxOptions = { commands: [cmd0], configurations: [], observables: [] }
 
-            let cmd = (cli: commander.Command) => cli.command(name).action(mock)
+        let actual = command(cmd1, cmd2)(init)
 
-            return [cmd, mock, name]
-        })
+        let expected: EtlxOptions = {
+            commands: [cmd0, cmd1, cmd2],
+            configurations: [],
+            observables: [],
+        }
 
-
-
-        let sut = etlx(
-            command(
-                ...testData.map(([x]) => x),
-            ),
-        )
-
-        testData.forEach(([_, f, name]) => {
-            sut(args(name))
-
-            expect(f).toHaveBeenCalledTimes(1)
-        })
+        expect(actual).toEqual(expected)
     })
 
     it('throw on invalid command', () => {
-        let actual = () => etlx(
-            command(42 as any),
-        )
+        let actual = () => etlx(command(42 as any))
 
-        expect(actual).toThrowError('Unable to add command - function is expected, but got number')
+        expect(actual).toThrowError('Unable to configure - all commands must be functions, but some were not')
     })
 
     it('show help when no command specified', () => {
