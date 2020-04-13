@@ -6,6 +6,7 @@ type DocProp = {
     name: string,
     format?: string,
     env?: string,
+    arg?: string,
     default?: string,
     doc?: string,
     parent?: DocObject,
@@ -35,9 +36,10 @@ export function getDocs(config: convict.Config<any>): DocProp[] {
             parent,
             doc: prop.doc,
             env: prop.env,
+            arg: prop.arg,
             default: JSON.stringify(prop.default),
             format: prop.format === undefined ? 'unknown' : prop.format.toString(),
-            }
+        }
 
         return [doc]
     }
@@ -49,22 +51,20 @@ export function getDocs(config: convict.Config<any>): DocProp[] {
 }
 
 export function formatDocs(docs: DocProp[]) {
-    const formatBreadcrumbs = (doc: DocObject): string => {
-        if (doc.parent === undefined) {
-            return doc.name
-        } else {
-            return `${formatBreadcrumbs(doc.parent)}:${doc.name}`
-        }
-    }
+    let br = '\n'
 
-    const lines = docs.reduce(
+    let lines = docs
+        .filter(x => x.name)
+        .reduce(
         (acc, doc) => {
-            let br = '\n'
-            let title = `## ${formatBreadcrumbs(doc)}${doc.env === undefined ? '' : ` (${doc.env})`}`
-            let desc = doc.doc === undefined ? undefined : doc.doc
-            let format = `* format: ${doc.format}`
+            let arg = doc.arg ? `--${doc.arg}` : undefined
+            let alt = [doc.env, arg].filter(Boolean).map(x => `\`${x}\``).join(', ')
+            alt = alt ? ` (${alt})` : ''
+            let title = `### ${formatBreadcrumbs(doc)}${alt}`
+            let desc = doc.doc ? doc.doc : undefined
+            let format = `* format: ${doc.format || '*'}`
             let required = `* required: ${doc.default === 'null'}`
-            let defaultValue = doc.default === 'null' ? undefined : `* default: ${doc.default}`
+            let defaultValue = doc.default === 'null' || doc.default === undefined ? undefined : `* default: ${doc.default}`
 
             const result = [
                 title,
@@ -83,4 +83,12 @@ export function formatDocs(docs: DocProp[]) {
     )
 
     return lines.join('\n')
+}
+
+function formatBreadcrumbs(doc: DocObject): string {
+    if (!doc.parent) {
+        return doc.name
+    } else {
+        return `${formatBreadcrumbs(doc.parent)}:${doc.name}`
+    }
 }
