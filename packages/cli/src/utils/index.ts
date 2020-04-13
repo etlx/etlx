@@ -13,8 +13,10 @@ export function flatten<T>(source: T[][]) {
 }
 
 export type Configure<T> = (x: T) => T
-export function pipeConfigure<T>(fns: Array<Configure<T>>) {
-    return (init: T) => fns.reduce(call, init)
+const normalizeConfiguration = <T extends Object>(f: Configure<T>) => (x: T): T => ({ ...x, ...f(x) })
+export function pipeConfigure<T extends Object>(fns: Array<Configure<T>>) {
+    let configs = fns.map(normalizeConfiguration)
+    return (init: T) => configs.reduce(call, init)
 }
 
 function call<A, B>(x: A, f: (a: A) => B): B {
