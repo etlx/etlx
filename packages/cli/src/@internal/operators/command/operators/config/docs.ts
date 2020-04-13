@@ -60,17 +60,15 @@ export function formatDocs(docs: DocProp[]) {
             let arg = doc.arg ? `--${doc.arg}` : undefined
             let alt = [doc.env, arg].filter(Boolean).map(x => `\`${x}\``).join(', ')
             alt = alt ? ` (${alt})` : ''
-            let title = `### ${formatBreadcrumbs(doc)}${alt}`
-            let desc = doc.doc ? doc.doc : undefined
+            let title = `### ${formatBreadcrumbs(doc)}${alt}${br}`
+            let desc = doc.doc ? `${doc.doc}${br}` : undefined
             let format = `* format: ${doc.format || '*'}`
             let required = `* required: ${doc.default === 'null'}`
             let defaultValue = doc.default === 'null' || doc.default === undefined ? undefined : `* default: ${doc.default}`
 
             const result = [
                 title,
-                br,
                 desc,
-                br,
                 format,
                 required,
                 defaultValue,
