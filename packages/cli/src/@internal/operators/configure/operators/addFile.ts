@@ -1,6 +1,6 @@
 import { ConfigurationOptions } from '../../../types'
 
-export const addFile = (filepath: string) => (opts: ConfigurationOptions) => ({
+export const addFiles = (...filepaths: string[]) => (opts: ConfigurationOptions) => ({
     ...opts,
-    paths: [...opts.paths, filepath],
+    paths: [...opts.paths, ...filepaths],
 })
