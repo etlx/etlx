@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs'
+import { Observable } from '../utils/observable'
 
-export type EtlxOperator = (config: any) => ($: Observable<any>) => Observable<any>
+export type EtlxOperator = (config: any) => Observable<any>
 
 export type InternalOperator = {
     name?: string,
@@ -9,5 +9,4 @@ export type InternalOperator = {
 
 export type EtlxOperatorVariant =
     | Observable<any>
-    | ((config: any) => Observable<any>)
     | EtlxOperator

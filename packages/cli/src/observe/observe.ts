@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs'
+import { isObservable } from '../utils/observable'
 import { EtlxOptions } from '../builder/types'
 import { EtlxOperatorVariant, EtlxOperator } from './types'
 
@@ -13,25 +13,13 @@ export const observe = (obs: EtlxOperatorVariant, name?: string) => (opts: EtlxO
 }
 
 function toOperator(variant: EtlxOperatorVariant): EtlxOperator {
-    if (variant instanceof Observable) {
-        return () => () => variant
+    if (isObservable(variant)) {
+        return () => variant
     }
 
     if (typeof variant === 'function') {
-        return (config) => {
-            let result: any = variant(config)
-
-            if (result instanceof Observable) {
-                return () => result
-            }
-
-            if (typeof result === 'function') {
-                return $ => result($)
-            }
-
-            throw new Error('ETL operator type is invalid. Expected (config -> observable -> observable), (config -> observable) or (observable)')
-        }
+        return variant
     }
 
-    throw new Error('ETL operator type is invalid. Expected (config -> observable -> observable), (config -> observable) or (observable)')
+    throw new TypeError('observe argument type is invalid. Expected (config -> observable) or (observable)')
 }

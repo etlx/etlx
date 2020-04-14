@@ -1,4 +1,4 @@
-import { merge, concat, Observable } from 'rxjs'
+import { merge, concat } from '../../utils/observable'
 import { notNullOrUndefined } from '../../utils'
 import { InternalOperator, EtlxOperator } from '../../observe'
 
@@ -12,22 +12,9 @@ export const createPipeline = (
         ? operators
         : keys.map(name => operators.find(x => x.name === name)).filter(notNullOrUndefined)
 
-    return (config: any) => ($: Observable<any>) => combine(...filtered.map(({ observable: pipe }) => {
-        if (pipe instanceof Observable) {
-            return pipe
-        }
+    let observables = (config: any) => filtered.map(({ observable }) => observable(config))
 
-        let result = pipe(config)
-        if (result instanceof Observable) {
-            return result
-        }
-
-        if (typeof result === 'function') {
-            return result($)
-        }
-
-        throw new Error('ETL operator type is invalid. Expected of of (config -> observable -> observable), (config -> observable) or (observable)')
-    }))
+    return (config: any) => combine(...observables(config))
 }
 
 

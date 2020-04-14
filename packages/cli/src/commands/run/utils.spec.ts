@@ -2,14 +2,15 @@ import { interval, of, Observable } from 'rxjs'
 import { mergeMap, take, toArray, map } from 'rxjs/operators'
 import { createPipeline } from './utils'
 import { EtlxOperator, InternalOperator } from '../../observe'
+import { Observable as EtlxObservable } from '../../utils/observable'
 
 describe('createPipeline', () => {
-    let sourceA: EtlxOperator = () => s => s.pipe(
+    let sourceA: EtlxOperator = () => of(undefined).pipe(
         mergeMap(() => interval(10).pipe(take(3))),
         map(x => `A${x}`),
     )
 
-    let sourceB: EtlxOperator = () => s => s.pipe(
+    let sourceB: EtlxOperator = () => of(undefined).pipe(
         mergeMap(() => interval(12).pipe(take(3))),
         map(x => `B${x}`),
     )
@@ -67,22 +68,27 @@ describe('createPipeline', () => {
 })
 
 
+
 function testSequential<T = any>(pipes: { [name: string]: EtlxOperator }, filter?: string[]): Observable<T> {
     let pipeline = mapObjPipesToArray(pipes)
 
-    let operator = createPipeline(pipeline, filter || [], false)({})
+    let operator = createPipeline(pipeline, filter || [], false)
 
-    return of(undefined).pipe(operator)
+    return convertObservables(operator({}))
 }
 
 function testConcurrent<T = any>(pipes: { [name: string]: EtlxOperator }, filter?: string[]): Observable<T> {
     let pipeline = mapObjPipesToArray(pipes)
 
-    let operator = createPipeline(pipeline, filter || [], true)({})
+    let operator = createPipeline(pipeline, filter || [], true)
 
-    return of(undefined).pipe(operator)
+    return convertObservables(operator({}))
 }
 
 function mapObjPipesToArray(pipes: { [name: string]: EtlxOperator }): InternalOperator[] {
     return Object.entries(pipes).map(([name, observable]) => ({ name, observable }))
+}
+
+function convertObservables<T>($: EtlxObservable<T>): Observable<T> {
+    return new Observable(x => $.subscribe(x))
 }

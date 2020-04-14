@@ -1,5 +1,4 @@
 import commander from 'commander'
-import { of } from 'rxjs'
 import { buildConfiguration } from '../../configuration/utils'
 import { InternalOperator } from '../../observe'
 import { EtlxOptions } from '../../builder'
@@ -24,9 +23,7 @@ export const runCommand = () => (cli: commander.Command, ctx: EtlxOptions) => {
 
         let pipeline = createPipeline(observables, scripts, cmd.concurrent || false)
 
-        of(cmd)
-        .pipe(pipeline(config))
-        .subscribe({
+        pipeline(config).subscribe({
             next: () => {},
             error: (e) => {
                 console.error('Error', e)
