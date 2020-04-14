@@ -1,10 +1,10 @@
 import pino from 'pino'
-import { LoggerOptions, Logger } from './types'
+import { LoggingOptions, Logger } from './types'
 
 
 const empty = () => {}
 
-export const createLogger = (opts: LoggerOptions): Logger => {
+export const pinoLogger = (opts: LoggingOptions): Logger => {
     if (opts.level === 'silent') {
         return empty
     }
@@ -19,7 +19,11 @@ export const createLogger = (opts: LoggerOptions): Logger => {
 
     let logger = pino(options)
 
-    return (message, level, name) => {
+    return fromPino(logger)
+}
+
+function fromPino(logger: pino.Logger): Logger {
+    return (message, level) => {
         if (message === null || message === undefined) {
             return
         }

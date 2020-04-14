@@ -2,17 +2,19 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
 export type Logger = (message: any, level?: LogLevel, name?: string) => void
 
-
-export type LoggerOptions = {
+export type LoggingOptions = {
     level?: LogLevel | 'silent',
     raw?: boolean,
+    components?: {
+        [name: string]: { level?: LogLevel },
+    },
 }
 
-export type LoggerConfig = {
-    logging?: LoggerOptions,
+export type LoggingConfig = {
+    logging?: LoggingOptions,
     logger: Logger,
 }
-export const loggerConfigSchema = {
+export const loggingConfigSchema = {
     logging: {
         level: {
             doc: 'Minimum level of log message to be printed. Possible values are: debug, info, warn, error, silent',
