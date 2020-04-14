@@ -12,7 +12,7 @@ export function flatten<T>(source: T[][]) {
     return new Array<T>().concat(...source)
 }
 
-export type Configure<T> = (x: T) => T
+export type Configure<T> = (x: T) => Partial<T>
 const normalizeConfiguration = <T extends Object>(f: Configure<T>) => (x: T): T => ({ ...x, ...f(x) })
 export function pipeConfigure<T extends Object>(fns: Array<Configure<T>>) {
     let configs = fns.map(normalizeConfiguration)
