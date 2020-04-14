@@ -1,4 +1,4 @@
-import { Configure } from '../../@internal/utils'
+import { Configure } from '../utils'
 import { EtlxOptions } from '../builder'
 import { ConfigurationOptions } from './types'
 
