@@ -8,6 +8,7 @@
   "typings": "index",
   "scripts": {
     "build": "tsc",
+    "pack": "tsc --outDir .",
     "test": "jest",
     "lint": "tslint --project ."
   },

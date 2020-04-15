@@ -5,14 +5,12 @@
   "scripts": {
     "install": "lerna bootstrap --hoist",
     "lock": "lerna bootstrap",
-    "build:clean": "shx rm -rf ./packages/**/dist",
-    "build:compile": "lerna run build",
-    "build": "npm run build:clean && npm run build:compile",
-    "pack": "npm run build",
-    "test": "jest",
-    "lint": "tslint --project .",
+    "clean": "shx rm -rf ./packages/**/dist",
+    "build": "npm run clean && lerna run build",
+    "pack": "npm run clean && lerna run pack",
     "publish": "npm run pack && lerna publish",
-    "lerna": "lerna"
+    "test": "jest",
+    "lint": "tslint --project ."
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
