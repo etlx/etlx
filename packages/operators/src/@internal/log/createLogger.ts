@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from '../utils'
+import { isNullOrUndefined } from '../../utils'
 import { Logger, LoggerInternal, LogLevel, LoggerConfig } from './types'
 
 

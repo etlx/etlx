@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs'
 import { mergeMap, map } from 'rxjs/operators'
 import { expandWhile } from '@etlx/operators/core'
-import { log, Logger } from '@etlx/operators/log'
+import { log, Logger } from '@etlx/operators/@internal/log'
 import { FromRequestOptions, fromJsonRequest, authBasic } from '@etlx/operators/http'
 
 import { ConfluenceConfig, ConfluenceAttachment, ConfluencePaginatedResponse } from './types'

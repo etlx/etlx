@@ -2,7 +2,7 @@ import { of, Observable } from 'rxjs'
 import { mergeMap, map } from 'rxjs/operators'
 import { expandWhile } from '@etlx/operators/core'
 import { isNullOrUndefined } from '@etlx/operators/utils'
-import { log, Logger } from '@etlx/operators/log'
+import { log, Logger } from '@etlx/operators/@internal/log'
 import { fromJsonRequest, FromRequestOptions, authBasic } from '@etlx/operators/http'
 
 import { ConfluencePage, ConfluenceConfig, ConfluencePageExpandable, ConfluencePaginatedResponse } from './types'

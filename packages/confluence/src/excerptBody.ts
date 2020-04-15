@@ -1,6 +1,6 @@
 import { of, OperatorFunction } from 'rxjs'
 import { mergeMap, map } from 'rxjs/operators'
-import { log, LoggerConfig } from '@etlx/operators/log'
+import { log, LoggerConfig } from '@etlx/operators/@internal/log'
 import { getTextContent } from '@etlx/operators/html/getTextContent'
 
 import { ConfluencePageBody } from './types'

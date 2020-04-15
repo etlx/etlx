@@ -1,7 +1,7 @@
 import { from, throwError } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 import { fromFetch } from 'rxjs/fetch'
-import { log, Logger, LoggerConfig } from '../log'
+import { log, Logger, LoggerConfig } from '../@internal/log'
 import { formatUrl } from './utils'
 import { invalidMediaType, faultyResponse } from './errors'
 

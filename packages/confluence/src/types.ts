@@ -1,4 +1,4 @@
-import { LoggerConfig } from '@etlx/operators/log'
+import { LoggerConfig } from '@etlx/operators/@internal/log'
 
 export type ConfluenceConfig = LoggerConfig & {
     confluence: {
