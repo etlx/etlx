@@ -14,11 +14,17 @@
         "noImplicitAny": true,
         "strictNullChecks": true,
         "allowSyntheticDefaultImports": true,
-        "lib": ["es2017", "dom"]
+        "lib": ["es2017", "dom"],
+
+        "baseUrl": ".",
+        "paths": {
+            "@etlx/operators/*": ["./packages/operators/src/*"],
+            "@etlx/cli/*": ["./packages/cli/src/*"]
+        }
     },
     "exclude": [
         "node_modules",
         "**/dist",
-        "**/lib",
+        "**/lib"
     ]
 }

@@ -1,8 +1,5 @@
 {
     "files.exclude": {
-        "**/.git": true,
-        "packages/**/*.js": true,
-        "packages/**/*.js.map": true,
-        "packages/**/*.d.ts": true,
+        "**/.git": true
     }
 }
