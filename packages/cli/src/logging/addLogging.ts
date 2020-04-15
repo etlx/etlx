@@ -1,6 +1,6 @@
 import { configure } from '../configuration'
 import { pinoLogger } from './pinoLogger'
-import { filterLogger } from './filterLogger'
+import { fromInternal } from './utils'
 import { loggingConfigSchema, LoggingOptions, LoggingConfig } from './types'
 
 const defaultOptions: LoggingOptions = { level: 'info', raw: false }
@@ -8,7 +8,7 @@ const defaultOptions: LoggingOptions = { level: 'info', raw: false }
 const createLogger = (config: LoggingConfig) => {
     let opts = config.logging || defaultOptions
     let pino = pinoLogger(opts)
-    let logger = filterLogger(opts, pino)
+    let logger = fromInternal(opts, pino)
 
     return { logger }
 }

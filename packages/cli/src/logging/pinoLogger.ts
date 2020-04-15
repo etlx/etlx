@@ -1,33 +1,25 @@
 import pino from 'pino'
-import { LoggingOptions, Logger } from './types'
+import { LoggingOptions, LoggerInternal } from './types'
 
 
-const empty = () => {}
-
-export const pinoLogger = (opts: LoggingOptions): Logger => {
-    if (opts.level === 'silent') {
-        return empty
-    }
-
+export const pinoLogger = (opts: LoggingOptions): LoggerInternal => {
     let pretty = opts.raw !== true
+    let prettyOpts: pino.PrettyOptions = {
+        translateTime: 'HH:mm:ss',
+        ignore: 'pid,hostname',
+    }
     let options: pino.LoggerOptions = {
-        prettyPrint: pretty,
-        timestamp: pretty ? false : undefined,
-        base: null,
+        prettyPrint: pretty ? prettyOpts : false,
         level: opts.level || 'info',
+        base: null,
     }
 
-    let logger = pino(options)
-
-    return fromPino(logger)
+    return fromPino(pino(options))
 }
 
-function fromPino(logger: pino.Logger): Logger {
-    return (message, level) => {
-        if (message === null || message === undefined) {
-            return
-        }
-        let msg = message.toString()
+function fromPino(pino: pino.Logger): LoggerInternal {
+    return (msg, level, name) => {
+        let logger = pino.child({ name })
 
         switch (level) {
             case 'debug':

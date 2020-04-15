@@ -1,6 +1,7 @@
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
 export type Logger = (message: any, level?: LogLevel, name?: string) => void
+export type LoggerInternal = (message: string, level: LogLevel, name: string) => void
 
 export type LoggingOptions = {
     level?: LogLevel | 'silent',
