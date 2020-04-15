@@ -4,7 +4,7 @@
         "sourceMap": true,
 
         "module": "commonjs",
-        "target": "esnext",
+        "target": "ES6",
         "esModuleInterop": true,
         "moduleResolution": "node",
         "resolveJsonModule": true,

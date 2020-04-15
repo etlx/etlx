@@ -1,14 +1,12 @@
 import { of, OperatorFunction } from 'rxjs'
 import { mergeMap, map } from 'rxjs/operators'
-import { log } from '@etlx/operators/core'
-import { LoggerFactory } from '@etlx/operators/utils'
+import { log, LoggerConfig } from '@etlx/operators/@internal/log'
 import { getTextContent } from '@etlx/operators/html/getTextContent'
 
 import { ConfluencePageBody } from './types'
 import { getPageBody } from './utils'
 
-export type ExcerptBodyOptions = {
-    logger?: LoggerFactory,
+export type ExcerptBodyOptions = LoggerConfig & {
     maxLength?: number,
 }
 
@@ -18,11 +16,11 @@ export function excerptBody<T extends Page>(options?: ExcerptBodyOptions): Opera
     let opts = options || {}
 
     return $ => $.pipe(
-        log(opts.logger, 'Making page body excerpt', 'confluence'),
+        log(opts, 'Making page body excerpt', 'confluence'),
         mergeMap(page => of(getPageBody(page)).pipe(
             getTextContent(options),
             map(excerpt => ({ ...page, excerpt })),
         )),
-        log(opts.logger, 'Page body excerpt added', 'confluence'),
+        log(opts, 'Page body excerpt added', 'confluence'),
     )
 }

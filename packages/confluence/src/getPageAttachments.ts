@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs'
 import { mergeMap, map } from 'rxjs/operators'
-import { expandWhile, log } from '@etlx/operators'
-import { Logger } from '@etlx/operators/utils'
+import { expandWhile } from '@etlx/operators/core'
+import { log, Logger } from '@etlx/operators/@internal/log'
 import { FromRequestOptions, fromJsonRequest, authBasic } from '@etlx/operators/http'
 
 import { ConfluenceConfig, ConfluenceAttachment, ConfluencePaginatedResponse } from './types'
@@ -42,7 +42,7 @@ const loadAttachmentsBatch = (opts: GetPageAttachmentsOptions, pageId: string) =
     }
 
     return of(request).pipe(
-        log(opts.logger, logRequest, 'confluence'),
+        log(opts, logRequest, 'confluence'),
         mergeMap(x => fromJsonRequest<Response>(x)),
     )
 }

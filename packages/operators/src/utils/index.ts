@@ -1,5 +1,4 @@
 export * from './promisify'
-export * from './logging'
 export * from './array'
 
 export const assertNever = (_: never) => {}
