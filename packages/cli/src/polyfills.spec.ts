@@ -1,4 +1,4 @@
-import polyfill from './polyfills'
+import { polyfill } from './polyfills'
 
 describe('polyfills', () => {
     it('can add all polyfills successfuly', () => {

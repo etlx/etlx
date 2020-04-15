@@ -13,7 +13,7 @@ function polyfillFetch(global: any) {
     global.AbortSignal = ac.AbortSignal
 }
 
-export default function (global: any) {
+export function polyfill(global: any) {
     global.atob = atob
     global.btoa = btoa
 
