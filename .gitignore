@@ -92,9 +92,4 @@ package-deps.json
 **/lib
 
 todo.md
-
-**/!src/
-**/*.js
-**/*.js.map
-**/*.d.ts
 data

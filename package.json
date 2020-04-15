@@ -4,11 +4,13 @@
   "license": "MIT",
   "scripts": {
     "install": "lerna bootstrap --hoist",
-    "build": "lerna run build",
+    "lock": "lerna bootstrap",
+    "clean": "shx rm -rf ./packages/**/dist",
+    "build": "npm run clean && lerna run build",
+    "pack": "npm run clean && lerna run pack",
+    "publish": "npm run pack && lerna publish",
     "test": "jest",
-    "lint": "tslint --project .",
-    "publish": "lerna run build && lerna publish",
-    "lerna": "lerna"
+    "lint": "tslint --project ."
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
@@ -16,6 +18,7 @@
     "jest": "^25.2.3",
     "lerna": "^3.20.2",
     "node-fetch": "^2.0.0",
+    "shx": "0.2.2",
     "ts-jest": "^25.2.1",
     "tslint": "^6.1.0",
     "tslint-config-airbnb": "^5.11.2",
