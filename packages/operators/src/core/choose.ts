@@ -1,29 +1,19 @@
-import { OperatorFunction, Observable } from 'rxjs'
+import { OperatorFunction, pipe, identity } from 'rxjs'
 
-type Condition = (() => boolean) | boolean  | undefined
+
 type Op<A, B> = OperatorFunction<A, B>
+type Scalar = boolean | number | string | null | undefined
 
-export function choose<A>(condition: Condition, ifTrue: Op<A, A>): Op<A, A>
-export function choose<A>(condition: Condition, ifTrue: Op<A, A>, ifFalse: Op<A, A>): Op<A, A>
-export function choose<A, B>(condition: Condition, ifTrue: Op<A, B>, ifFalse: Op<A, B>): Op<A, B>
-export function choose<A, B, C>(condition: Condition, ifTrue: Op<A, B>, ifFalse: Op<A, C>): Op<A, B | C>
+const truthy = (x: (() => Scalar) | Scalar) => typeof x === 'function' ? x() : x
 
-export function choose(condition: Condition, ifTrue: Op<any, any>, ifFalse?: Op<any, any>) {
-    return (stream: Observable<any>) => {
-        if (truthy(condition)) {
-            return stream.pipe(ifTrue)
-        } else {
-            return ifFalse === undefined ? stream : stream.pipe(ifFalse)
-        }
-    }
-}
-
-function truthy(x: any): boolean {
-    if (typeof x === 'function') {
-        return truthy(x())
-    } else if (x) {
-        return true
-    } else {
-        return false
-    }
+export function choose<A>(condition: (() => Scalar) | Scalar, ifTrue: OperatorFunction<A, A>): OperatorFunction<A, A>
+export function choose<A>(condition: (() => Scalar) | Scalar, ifTrue: OperatorFunction<A, A>, ifFalse: OperatorFunction<A, A>): OperatorFunction<A, A>
+export function choose<A, B>(condition: (() => Scalar) | Scalar, ifTrue: OperatorFunction<A, B>, ifFalse: OperatorFunction<A, B>): OperatorFunction<A, B>
+export function choose<A, B, C>(condition: (() => Scalar) | Scalar, ifTrue: OperatorFunction<A, B>, ifFalse: OperatorFunction<A, C>): OperatorFunction<A, B | C>
+export function choose(condition: (() => Scalar) | Scalar, ifTrue: Op<any, any>, ifFalse?: Op<any, any>) {
+    return (
+        truthy(condition) ? pipe(ifTrue)
+        : ifFalse ? pipe(ifFalse)
+        : identity
+    )
 }
