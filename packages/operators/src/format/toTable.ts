@@ -2,7 +2,7 @@ import { Observable, of, concat, identity } from 'rxjs'
 import { take, map } from 'rxjs/operators'
 
 import { choose, assert, combineVaradic } from '../core'
-import { notNullOrUndefined, ofType, Type } from '../utils'
+import { notNullOrUndefined, ofType, Type } from '../@internal/utils'
 import { isNullOrUndefined } from 'util'
 
 export type ToTableOptions<T = any> = {

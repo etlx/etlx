@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom'
 import { OperatorFunction, of, from, throwError, empty, identity } from 'rxjs'
 import { mergeMap, map, mapTo, defaultIfEmpty } from 'rxjs/operators'
-import { isNullOrUndefined } from '../utils'
+import { isNullOrUndefined } from '../@internal/utils'
 import { fromRequest, invalidMediaType, faultyResponse, authBasic, formatUrl } from '../http'
 
 import { getDom } from './utils'

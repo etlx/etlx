@@ -1,4 +1,4 @@
-import { promisifyLast } from '../utils'
+import { promisifyLast } from '../@internal/utils'
 import { getTextContent } from './getTextContent'
 
 const sut = promisifyLast(getTextContent)
