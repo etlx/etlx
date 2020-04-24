@@ -18,8 +18,7 @@ export const filestore = <T>(filepath: string, options?: FilestoreOptions): Stor
     let validate = opts.validate || empty<fs.Stats>()
 
     return {
-        exists: () => of(filepath).pipe(
-            lstat(),
+        exists: () => lstat(filepath).pipe(
             catchError(() => of(false)),
             map(x => typeof x === 'boolean' ? x : validate(x).ok),
         ),
