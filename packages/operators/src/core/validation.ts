@@ -1,4 +1,4 @@
-import { Observable, OperatorFunction } from 'rxjs'
+import { OperatorFunction, pipe } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 type ValidationErrors = {
@@ -29,7 +29,7 @@ export function validate<T>(validator: Validator<T>): OperatorFunction<T, [T, bo
         return [x, ok, errors]
     }
 
-    return ($: Observable<T>) => $.pipe(map(toTriple))
+    return pipe(map(toTriple))
 }
 
 export function empty<T>(): Validator<T> {

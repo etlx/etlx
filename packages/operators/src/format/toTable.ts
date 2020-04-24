@@ -1,4 +1,4 @@
-import { Observable, of, concat, identity } from 'rxjs'
+import { of, concat, identity, pipe, OperatorFunction } from 'rxjs'
 import { take, map } from 'rxjs/operators'
 
 import { choose, assert, combineVaradic } from '../core'
@@ -12,7 +12,7 @@ export type ToTableOptions<T = any> = {
     stringify?: (x: any, idx: number) => any,
 }
 
-const firstObjectKeys = <T>() => ($: Observable<T>) => $.pipe(take(1), map(Object.keys))
+const firstObjectKeys = <T>() => pipe(take<T>(1), map(Object.keys))
 
 const toHeaders = <T>(opts: ToTableOptions<T>) => {
     let getHeader = (key: string): string => {
@@ -24,7 +24,7 @@ const toHeaders = <T>(opts: ToTableOptions<T>) => {
         }
     }
 
-    return ($: Observable<T>) => $.pipe(
+    return pipe(
         choose<T, string[]>(
             opts.keys === undefined,
             firstObjectKeys(),
@@ -61,7 +61,7 @@ const toRows = <T>(opts: ToTableOptions<T>) => {
     let toValues = mapValues(opts)
     let toStrings = (xs: any[]) => xs.map(stringify)
 
-    return ($: Observable<T>) => $.pipe(
+    return pipe(
         map(toValues),
         map(toStrings),
     )
@@ -71,12 +71,12 @@ const unexpectedTypeError = (name: string, expectedType: string) => (x: any) =>
     new Error(`Unexpected ${name} type. [${expectedType}] expected but [${typeof x}] received`)
 
 
-export const toTable = <T = any>(options?: ToTableOptions<T>) => {
+export const toTable = <T = any>(options?: ToTableOptions<T>): OperatorFunction<T, any[]> => {
     let opts = options || {}
     validateOptions(opts)
 
-    return ($: Observable<T>) => $.pipe(
-        assert(ofType('object'), unexpectedTypeError('stream value', 'object')),
+    return pipe(
+        assert<T>(ofType('object'), unexpectedTypeError('stream value', 'object')),
         choose(
             opts.headers === undefined,
             toRows(opts),
