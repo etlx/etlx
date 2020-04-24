@@ -1,21 +1,8 @@
 import fs from 'fs'
 import { join, parse, ParsedPath } from 'path'
-import { of, empty, bindNodeCallback, merge } from 'rxjs'
+import { of, empty, merge } from 'rxjs'
 import { mergeMap, map, expand } from 'rxjs/operators'
-import { lstat } from './lstat'
-
-const readdir = bindNodeCallback(
-    (path: string, callback: (e: any, files: string[]) => void) => fs.readdir(path, callback),
-)
-
-export type LsOptions = {
-    recursive?: boolean,
-}
-
-export type LsItem = ParsedPath & {
-    path: string,
-    type: 'file' | 'directory',
-}
+import { lstat, readdir } from './bound'
 
 const toLsItem = (path: string) => (stats: fs.Stats): LsItem => ({
     ...parse(path),
@@ -33,6 +20,15 @@ const scanDir = (dir: string) => readdir(dir).pipe(
 const scanDirRecursive = (dir: string) => scanDir(dir).pipe(
     expand(({ type, path }) => type === 'directory' ? scanDir(path) : empty()),
 )
+
+export type LsOptions = {
+    recursive?: boolean,
+}
+
+export type LsItem = ParsedPath & {
+    path: string,
+    type: 'file' | 'directory',
+}
 
 export function ls(basePath: string, options?: LsOptions) {
     let opts = options || {}
