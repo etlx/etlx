@@ -2,7 +2,7 @@ import fs from 'fs'
 import { join, parse, ParsedPath } from 'path'
 import { of, empty, merge } from 'rxjs'
 import { mergeMap, map, expand } from 'rxjs/operators'
-import { lstat, readdir } from './bound'
+import { lstat, readdir } from './bindings'
 
 const toLsItem = (path: string) => (stats: fs.Stats): LsItem => ({
     ...parse(path),
