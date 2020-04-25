@@ -1,9 +1,10 @@
-import glob_, { IOptions } from 'glob'
-import { bindNodeCallback, Observable } from 'rxjs'
+import globCallback, { IOptions } from 'glob'
+import { bindNodeCallback, Observable, from } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
+
+type Glob = (p: string, opts?: IOptions) => Observable<string[]>
+const globObservable: Glob = bindNodeCallback(globCallback)
 
 export type GlobOptions = IOptions
-
-type Glob = (pattern: string, opts?: GlobOptions) => Observable<string[]>
-export const glob: Glob = bindNodeCallback(
-    (p: string, o: IOptions, cb: (e: any, m: string[]) => void) => glob_(p, o, cb),
-)
+export const glob = (pattern: string, opts?: GlobOptions): Observable<string> =>
+    globObservable(pattern, opts).pipe(mergeMap(from))
