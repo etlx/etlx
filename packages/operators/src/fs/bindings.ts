@@ -25,3 +25,9 @@ type Mv = (source: string, target: string) => Observable<void>
 export const mv: Mv = bindNodeCallback(
     (p1: fs.PathLike, p2: fs.PathLike, cb: NodeCallback) => fs.rename(p1, p2, cb),
 )
+
+type RmDir = (path: fs.PathLike, opts?: fs.RmDirOptions) => Observable<void>
+export const rmdir: RmDir = bindNodeCallback(fs.rmdir)
+
+type Unlink = (path: fs.PathLike) => Observable<void>
+export const unlink: Unlink = bindNodeCallback(fs.unlink)
