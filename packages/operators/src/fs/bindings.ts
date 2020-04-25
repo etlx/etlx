@@ -33,3 +33,6 @@ export const readFile: ReadFile = bindNodeCallback(fs.readFile)
 
 type WriteFile = (path: fs.PathLike, data: any, opts?: fs.WriteFileOptions) => Observable<void>
 export const writeFile: WriteFile = bindNodeCallback(fs.writeFile)
+
+type Access = (path: fs.PathLike, mode?: number) => Observable<void>
+export const access: Access = bindNodeCallback(fs.access)
