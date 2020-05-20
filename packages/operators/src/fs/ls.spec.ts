@@ -1,7 +1,7 @@
 import { ls } from './ls'
 import { toArray, map } from 'rxjs/operators'
 
-const testdir = `${__dirname}/test`
+const testdir = `${__dirname}/test/ls`
 
 describe('ls', () => {
     it('can list', async () => {

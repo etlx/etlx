@@ -2,8 +2,8 @@ import { Observable, empty, SchedulerLike, pipe } from 'rxjs'
 import { expand } from 'rxjs/operators'
 
 export function expandWhile<T = any>(
-    project: (x: T) => Observable<T>,
     predicate: (x: T) => boolean,
+    project: (x: T) => Observable<T>,
     concurrent?: number,
     scheduler?: SchedulerLike,
 ) {

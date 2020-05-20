@@ -45,7 +45,7 @@ const getSpacePage = (opts: GetSpacePagesOptions) => (spaceKey?: string) => (sta
 export const getSpaceContent = (opts: GetSpacePagesOptions) => ($: Observable<string | undefined>) => $.pipe(
     map(getSpacePage(opts)),
     mergeMap(page => page(0).pipe(
-        expandWhile(x => page(x.start + (opts.limit || 20)), x => x.size > 0),
+        expandWhile(x => x.size > 0, x => page(x.start + (opts.limit || 20))),
         mergeMap(x => of(...x.results)),
     )),
 )
