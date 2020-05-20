@@ -1,6 +1,6 @@
 import { mockFetch, returnOnce, faultyResponse } from '../@internal/testing/fetch'
 import { inlineImages } from './inlineImages'
-import { promisifyLast } from '../utils'
+import { promisifyLast } from '../@internal/utils'
 import { JSDOM } from 'jsdom'
 import { invalidMediaType } from '../http'
 

@@ -1,4 +1,4 @@
-import { Observable, from, OperatorFunction, identity } from 'rxjs'
+import { from, OperatorFunction, identity, pipe } from 'rxjs'
 import { toArray, map, mergeMap } from 'rxjs/operators'
 
 type SortFn<T> = (a: T, b: T) => number
@@ -28,7 +28,7 @@ export function combineSort<T>(...fns: SortFn<T>[]): SortFn<T> {
 }
 
 export function sort<A>(f: (a: A, b: A) => number): OperatorFunction<A, A> {
-    return ($: Observable<A>) => $.pipe(
+    return pipe(
         toArray(),
         map(xs => xs.sort(f)),
         mergeMap(from),

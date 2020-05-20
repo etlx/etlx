@@ -1,4 +1,4 @@
-import { promisify } from '../utils'
+import { promisify } from '../@internal/utils'
 import { toTable, ToTableOptions } from './toTable'
 import { from } from 'rxjs'
 import { toArray } from 'rxjs/operators'

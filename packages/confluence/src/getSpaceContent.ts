@@ -1,7 +1,7 @@
 import { of, Observable } from 'rxjs'
 import { mergeMap, map } from 'rxjs/operators'
 import { expandWhile } from '@etlx/operators/core'
-import { isNullOrUndefined } from '@etlx/operators/utils'
+import { isNullOrUndefined } from '@etlx/operators/@internal/utils'
 import { log, Logger } from '@etlx/operators/@internal/log'
 import { fromJsonRequest, FromRequestOptions, authBasic } from '@etlx/operators/http'
 
@@ -45,7 +45,7 @@ const getSpacePage = (opts: GetSpacePagesOptions) => (spaceKey?: string) => (sta
 export const getSpaceContent = (opts: GetSpacePagesOptions) => ($: Observable<string | undefined>) => $.pipe(
     map(getSpacePage(opts)),
     mergeMap(page => page(0).pipe(
-        expandWhile(x => page(x.start + (opts.limit || 20)), x => x.size > 0),
+        expandWhile(x => x.size > 0, x => page(x.start + (opts.limit || 20))),
         mergeMap(x => of(...x.results)),
     )),
 )

@@ -2,9 +2,7 @@ import fs from 'fs'
 import { Observable, of } from 'rxjs'
 import { map, catchError } from 'rxjs/operators'
 import { Validator, empty, ok, error } from '../core/validation'
-import { streamIntoFile } from '../fs'
-import { lstat } from '../fs/lstat'
-import { fromFileStream } from '../fs'
+import { streamIntoFile, fromFileStream, lstat } from '../fs'
 
 import { Store } from './types'
 
@@ -20,8 +18,7 @@ export const filestore = <T>(filepath: string, options?: FilestoreOptions): Stor
     let validate = opts.validate || empty<fs.Stats>()
 
     return {
-        exists: () => of(filepath).pipe(
-            lstat(),
+        exists: () => lstat(filepath).pipe(
             catchError(() => of(false)),
             map(x => typeof x === 'boolean' ? x : validate(x).ok),
         ),

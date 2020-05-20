@@ -1,4 +1,4 @@
-import { Observable } from "rxjs"
+import { Observable } from 'rxjs'
 
 export function fromAsyncIterable<T = any>(readable: AsyncIterable<T>): Observable<T> {
     let iterate = createtIterator(readable)

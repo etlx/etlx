@@ -1,142 +1,56 @@
-import { of } from 'rxjs'
-import { ls, LsItem } from './ls'
+import { ls } from './ls'
 import { toArray, map } from 'rxjs/operators'
 
-const testdir = `${__dirname}/test`
+const testdir = `${__dirname}/test/ls`
 
 describe('ls', () => {
     it('can list', async () => {
-        const observable = of(testdir).pipe(
-            ls(),
-        )
+        const $ = ls(testdir)
 
-        const actual = await observable.pipe(map(x => x.base), toArray()).toPromise()
+        const actual = await $.pipe(map(x => x.base), toArray()).toPromise()
 
-        const expected = ['test', '1', '2', 'test.txt']
-
-        expect(actual).toEqual(expected)
-    })
-
-    it('can list files', async () => {
-        const observable = of(testdir).pipe(
-            ls({ filesOnly: true }),
-        )
-
-        const actual = await observable.pipe(map(x => x.base), toArray()).toPromise()
-
-        const expected = ['test.txt']
+        const expected = ['1', '2', 'test.txt']
 
         expect(actual).toEqual(expected)
     })
 
     it('can list recursively', async () => {
-        const observable = of(testdir).pipe(
-            ls({ recursive: true }),
-        )
+        const $ = ls(testdir, { recursive: true })
 
-        const actual = await observable.pipe(map(x => x.base), toArray()).toPromise()
+        const actual = await $.pipe(map(x => x.base), toArray()).toPromise()
 
-        const expected = ['test', '1', '1.2', '1.2.txt', '1.txt', '2', '2.txt', 'test.txt']
-
-        expect(actual).toEqual(expected)
-    })
-
-    it('can list files recursively', async () => {
-        const observable = of(testdir).pipe(
-            ls({ filesOnly: true, recursive: true }),
-        )
-
-        const actual = await observable.pipe(map(x => x.base), toArray()).toPromise()
-
-        const expected = ['1.2.txt', '1.txt', '2.txt', 'test.txt']
-
-        expect(actual).toEqual(expected)
-    })
-
-    it('can list with pattern', async () => {
-        const observable = of(testdir).pipe(
-            ls({ pattern: '*.txt' }),
-        )
-
-        const actual = await observable.pipe(map(x => x.base), toArray()).toPromise()
-
-        const expected = ['test.txt']
-
-        expect(actual).toEqual(expected)
-    })
-
-    it('can list with pattern recursively', async () => {
-        const observable = of(testdir).pipe(
-            ls({ pattern: '1*', recursive: true }),
-        )
-
-        const actual = await observable.pipe(map(x => x.base), toArray()).toPromise()
-
-        const expected = ['1', '1.2', '1.2.txt', '1.txt']
-
-        expect(actual).toEqual(expected)
-    })
-
-    it('can list files with pattern recursively', async () => {
-        const observable = of(testdir).pipe(
-            ls({ pattern: '1*', recursive: true, filesOnly: true }),
-        )
-
-        const actual = await observable.pipe(map(x => x.base), toArray()).toPromise()
-
-        const expected = ['1.2.txt', '1.txt']
+        const expected = ['1', '2', 'test.txt', '1.2', '1.txt', '2.txt', '1.2.txt']
 
         expect(actual).toEqual(expected)
     })
 
     it('return input on file path', async () => {
-        const observable = of(`${testdir}/test.txt`).pipe(ls())
+        const $ = ls(`${testdir}/test.txt`)
 
-        const actual = await observable.pipe(map(x => x.base), toArray()).toPromise()
+        const actual = await $.pipe(map(x => x.base), toArray()).toPromise()
 
         const expected = ['test.txt']
 
         expect(actual).toEqual(expected)
     })
 
-    it('skips unexisting file', async () => {
-        const observable = of('./unknow/dir').pipe(ls())
+    it('throw unexisting file', async () => {
+        const $ = ls('./unknow/dir')
 
-        const actual = await observable.pipe(toArray()).toPromise()
+        const actual = $.pipe(toArray()).toPromise()
 
-        const expected: LsItem[] = []
-
-        expect(actual).toEqual(expected)
+        await expect(actual).rejects.toThrowError("ENOENT: no such file or directory, lstat './unknow/dir'")
     })
 
-    it('skips on null', async () => {
-        const observable = of(null as any).pipe(ls())
+    it('throw on null', () => {
+        const actual = () => ls(null as any)
 
-        const actual = await observable.pipe(toArray()).toPromise()
-
-        const expected: LsItem[] = []
-
-        expect(actual).toEqual(expected)
+        expect(actual).toThrowError('basePath must be string')
     })
 
-    it('skips on undefined', async () => {
-        const observable = of(undefined as any).pipe(ls())
+    it('throw on undefined', () => {
+        const actual = () => ls(undefined as any)
 
-        const actual = await observable.pipe(toArray()).toPromise()
-
-        const expected: LsItem[] = []
-
-        expect(actual).toEqual(expected)
+        expect(actual).toThrowError('basePath must be string')
     })
-
-    it('can list with basedir option', async () => {
-        const observable = of(undefined).pipe(ls({ basedir: testdir }))
-
-        const actual = await observable.pipe(map(x => x.base), toArray()).toPromise()
-
-        const expected = ['test', '1', '2', 'test.txt']
-
-        expect(actual).toEqual(expected)
-    })
-
 })

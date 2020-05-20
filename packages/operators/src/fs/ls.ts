@@ -1,71 +1,46 @@
-import { promises as fs, existsSync } from 'fs'
-import path, { ParsedPath } from 'path'
-import { OperatorFunction, from } from 'rxjs'
-import { mergeMap, filter, map } from 'rxjs/operators'
-import { isNullOrUndefined, notNullOrUndefined, flatten } from '../utils'
-import * as minimatch from 'minimatch'
-const empty: any[] = []
+import fs from 'fs'
+import { join, parse, ParsedPath } from 'path'
+import { of, empty, merge } from 'rxjs'
+import { mergeMap, map, expand } from 'rxjs/operators'
+import { lstat, readdir } from './bindings'
 
+const toLsItem = (path: string) => (stats: fs.Stats): LsItem => ({
+    ...parse(path),
+    path,
+    type: stats.isDirectory() ? 'directory' : 'file',
+})
+
+const scanDir = (dir: string) => readdir(dir).pipe(
+    map(xs => xs.map(x => join(dir, x))),
+    mergeMap(xs => merge(
+        ...xs.map(x => lstat(x).pipe(map(toLsItem(x)))),
+    )),
+)
+
+const scanDirRecursive = (dir: string) => scanDir(dir).pipe(
+    expand(({ type, path }) => type === 'directory' ? scanDir(path) : empty()),
+)
 
 export type LsOptions = {
     recursive?: boolean,
-    pattern?: string,
-    filesOnly?: boolean,
-    basedir?: string,
 }
 
 export type LsItem = ParsedPath & {
     path: string,
-    type: string,
+    type: 'file' | 'directory',
 }
 
-export function ls(options?: LsOptions): OperatorFunction<string | void, LsItem> {
-    const opts = options || {}
+export function ls(basePath: string, options?: LsOptions) {
+    let opts = options || {}
 
-    return stream => stream.pipe(
-        map(x => x || opts.basedir),
-        filter(x => notNullOrUndefined(x) && existsSync(x)),
-        mergeMap(x => from(lsPromise(x!, opts))),
-        mergeMap(x =>  from(x)),
+    if (typeof basePath !== 'string') {
+        throw new TypeError('basePath must be string')
+    }
+
+    return lstat(basePath).pipe(
+        mergeMap(stats => stats.isFile()
+            ? of(toLsItem(basePath)(stats))
+            : opts.recursive ? scanDirRecursive(basePath) : scanDir(basePath),
+        ),
     )
-}
-
-async function lsPromise(pathString: string, opts: LsOptions, terminal: boolean = false): Promise<LsItem[]> {
-    const itemPath = path.resolve(pathString)
-    const parsed = path.parse(itemPath)
-    const matchPattern = isMatchPattern(itemPath, opts.pattern)
-
-    const stats = await fs.lstat(itemPath)
-    if (stats.isFile()) {
-        return matchPattern ? [{ ...parsed, path: itemPath, type: 'file' }] : empty
-    }
-
-    const children = terminal ? [] : await getChildren(pathString, opts)
-
-    if (opts.filesOnly || !matchPattern) {
-        return children
-    }
-
-    const currentDirItem = { ...parsed, path: itemPath, type: 'directory' }
-    return [currentDirItem, ...children]
-}
-
-async function getChildren(pathString: string, opts: LsOptions) {
-    const files = await fs.readdir(pathString)
-    const children = files.map(x => lsPromise(path.join(pathString, x), opts, opts.recursive !== true))
-    return flatten(await Promise.all(children))
-}
-
-const matchOptions: minimatch.IOptions = {
-    matchBase: true,
-}
-
-function isMatchPattern(pathstring: string, pattern?: string) {
-    if (isNullOrUndefined(pattern) || pattern.length === 0) {
-        return true
-    }
-
-    const filter = minimatch.filter(pattern, matchOptions)
-
-    return filter(pathstring, 0, empty)
 }

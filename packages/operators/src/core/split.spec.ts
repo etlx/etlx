@@ -1,64 +1,37 @@
-import { Observable, of, range, interval } from 'rxjs'
-import { map, toArray, take } from 'rxjs/operators'
+import { Observable, of, range } from 'rxjs'
+import { map, toArray, mapTo, delay } from 'rxjs/operators'
 import { split } from './split'
 
 describe('split', () => {
-    it('can duplicate value', () => {
-        const source = of(0)
+    it('can duplicate value', async () => {
+        let $ = of(0).pipe(split())
 
-        const observable = source.pipe(split())
+        let actual = await $.pipe(toArray()).toPromise()
+        let expected = [[0, 0]]
 
-        observable.subscribe((actual) => {
-            const expected = [0, 0]
-
-            expect(actual).toEqual(expected)
-        })
+        expect(actual).toEqual(expected)
     })
 
-    it('can emit single child value', () => {
-        const source = range(0, 3)
-        const observable = source.pipe(
-            split(
-                () => of(42),
-            ),
+    it('can emit single child value', async () => {
+        let $ = range(0, 3).pipe(
+            split(mapTo(42)),
         )
 
-        observable.pipe(toArray()).subscribe((actual) => {
-            const expected = [[0, 42], [1, 42], [2, 42]]
+        let actual = await $.pipe(toArray()).toPromise()
+        let expected = [[0, 42], [1, 42], [2, 42]]
 
-            expect(actual).toEqual(expected)
-        })
+        expect(actual).toEqual(expected)
     })
 
-    it('can emit multiple child values', () => {
-        const source = range(0, 3)
-        const observable = source.pipe(
-            split(
-                () => range(0, 2),
-            ),
+    it('preserve order', async () => {
+        let $ = range(0, 3).pipe(
+            split(delay(10)),
         )
 
-        observable.pipe(toArray()).subscribe((actual) => {
-            const expected = [[0, 1], [0, 2], [1, 1], [1, 2]]
+        let actual = await $.pipe(toArray()).toPromise()
+        let expected = [[0, 0], [1, 1], [2, 2]]
 
-            expect(actual).toEqual(expected)
-        })
-    })
-
-    it('ignore emit order', () => {
-        const source = interval(50)
-        const observable = source.pipe(
-            split(
-                () => interval(500),
-                take(2),
-            ),
-        )
-
-        observable.pipe(take(2), toArray()).subscribe((actual) => {
-            const expected = [[0, 0], [1, 0], [0, 1], [1, 1]]
-
-            expect(actual).toEqual(expected)
-        })
+        expect(actual).toEqual(expected)
     })
 })
 

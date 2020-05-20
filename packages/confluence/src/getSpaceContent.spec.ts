@@ -1,5 +1,5 @@
 import url from 'url'
-import { promisify } from '@etlx/operators/utils'
+import { promisify } from '@etlx/operators/@internal/utils'
 import { mockFetch, jsonResponse } from '@etlx/operators/@internal/testing/fetch'
 import { getSpaceContent } from './getSpaceContent'
 import { respondWith, page, dataPage, confluence } from './@internal/testing'

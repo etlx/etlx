@@ -51,7 +51,7 @@ const paginateAttachments = <T extends Page>(opts: GetPageAttachmentsOptions) =>
     let loadPage = loadAttachmentsBatch(opts, page.id)
 
     return loadPage(0).pipe(
-        expandWhile(x => loadPage(x.start + (opts.limit || 20)), x => x.size > 0),
+        expandWhile(x => x.size > 0, x => loadPage(x.start + (opts.limit || 20))),
         concatPages<ConfluenceAttachment>(),
         map(attachment => ({
             ...page,

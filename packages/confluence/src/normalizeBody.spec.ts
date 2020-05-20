@@ -1,4 +1,4 @@
-import { promisifyLast } from '@etlx/operators/utils'
+import { promisifyLast } from '@etlx/operators/@internal/utils'
 import { mockFetch } from '@etlx/operators/@internal/testing/fetch'
 import { normalizeBody } from './normalizeBody'
 import { page, confluence } from './@internal/testing'
