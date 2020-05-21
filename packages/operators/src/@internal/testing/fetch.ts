@@ -1,12 +1,16 @@
+/* eslint-disable no-param-reassign */
+
 jest.mock('node-fetch')
-import fetch from 'node-fetch'
 
-;((global: any) => {
-    const { Response, Headers } = jest.requireActual('node-fetch')
+// eslint-disable-next-line import/first, import/no-extraneous-dependencies
+import fetch from 'node-fetch';
 
-    global.Response = Response
-    global.Headers = Headers
-    global.fetch = fetch
+((global: any) => {
+  let { Response, Headers } = jest.requireActual('node-fetch')
+
+  global.Response = Response
+  global.Headers = Headers
+  global.fetch = fetch
 })(global)
 
 const headers = { 'content-type': 'application/json' }
@@ -17,8 +21,8 @@ export const returnOnce = <TOut>(x: TOut) => (mock: jest.Mock<TOut>) => mock.moc
 
 export type MockFetch = jest.Mock<Promise<Response>, [RequestInfo, RequestInit | undefined]>
 export function mockFetch(f?: (x: MockFetch) => MockFetch): MockFetch {
-    let mock: MockFetch = fetch as any
-    mock.mockClear()
+  let mock: MockFetch = fetch as any
+  mock.mockClear()
 
-    return f === undefined ? mock : f(mock)
+  return f === undefined ? mock : f(mock)
 }

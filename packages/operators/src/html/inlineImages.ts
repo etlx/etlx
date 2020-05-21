@@ -9,87 +9,92 @@ import { mapNode } from './iterate'
 
 
 export type InlineImagesOptions = {
-    host?: string,
-    username?: string,
-    password?: string,
-    skipOnError?: boolean,
+  host?: string,
+  username?: string,
+  password?: string,
+  skipOnError?: boolean,
 }
 
 type Image = { mime: string, base64: string }
 
 export function inlineImages(options?: InlineImagesOptions): OperatorFunction<JSDOM | string, JSDOM> {
-    let opts = options || {}
+  let opts = options || {}
 
-    return $ => $.pipe(
-        mergeMap((input) => {
-            let dom = getDom(input)
+  return $ => $.pipe(
+    mergeMap((input) => {
+      let dom = getDom(input)
 
-            return of(dom).pipe(
-                mapNode(updateImage(opts)),
-                mergeMap(identity),
-                mapTo(dom),
-                defaultIfEmpty(dom),
-            )
-        }),
-    )
+      return of(dom).pipe(
+        mapNode(updateImage(opts)),
+        mergeMap(identity),
+        mapTo(dom),
+        defaultIfEmpty(dom),
+      )
+    }),
+  )
 }
 
 function updateImage(opts: InlineImagesOptions) {
-    let hasCredentials = opts.username !== undefined && opts.password !== undefined
-    let headers = hasCredentials
-        ? authBasic({ username: opts.username!, password: opts.password! })
-        : undefined
+  let hasCredentials = opts.username !== undefined && opts.password !== undefined
+  let headers = hasCredentials
+    ? authBasic({ username: opts.username!, password: opts.password! })
+    : undefined
 
-    return (node: Node) => {
-        if (node.nodeName !== 'IMG') return empty()
+  return (node: Node) => {
+    if (node.nodeName !== 'IMG') return empty()
 
-        const element = node as HTMLElement
-        const src = element.getAttribute('src')
+    let element = node as HTMLElement
+    let src = element.getAttribute('src')
 
-        if (isNullOrUndefined(src)) return empty()
+    if (isNullOrUndefined(src)) return empty()
 
-        const resp$ = fromRequest({
-            url: formatUrl(src, opts),
-            headers,
-        })
+    let resp$ = fromRequest({
+      url: formatUrl(src, opts),
+      headers,
+    })
 
-        return resp$.pipe(
-            mergeMap(toImage(opts)),
-            map(updateImageSrc(element)),
-        )
-    }
+    return resp$.pipe(
+      mergeMap(toImage(opts)),
+      map(updateImageSrc(element)),
+    )
+  }
 }
 
 function updateImageSrc(element: HTMLElement) {
-    return ({ base64, mime }: Image) => {
-        element.setAttribute('src', `data:${mime};base64, ${base64}`)
+  return ({ base64, mime }: Image) => {
+    element.setAttribute('src', `data:${mime};base64, ${base64}`)
 
-        return element
-    }
+    return element
+  }
 }
 
 function toImage(opts: InlineImagesOptions) {
-    return (response: Response) => {
-        if (!response.ok) return opts.skipOnError
-            ? empty()
-            : throwError(faultyResponse(response))
-
-        let contentType = response.headers.get('content-type') || ''
-        let [mime] = contentType.split(';')
-
-        if (!contentType.startsWith('image/')) return opts.skipOnError
-            ? empty()
-            : throwError(invalidMediaType(mime, 'image/*'))
-
-        return from(response.arrayBuffer()).pipe(
-            map(toBase64),
-            map(base64 => ({ base64, mime } as Image)))
+  return (response: Response) => {
+    if (!response.ok) {
+      return opts.skipOnError
+        ? empty()
+        : throwError(faultyResponse(response))
     }
+
+    let contentType = response.headers.get('content-type') || ''
+    let [mime] = contentType.split(';')
+
+    if (!contentType.startsWith('image/')) {
+      return opts.skipOnError
+        ? empty()
+        : throwError(invalidMediaType(mime, 'image/*'))
+    }
+
+    return from(response.arrayBuffer()).pipe(
+      map(toBase64),
+      map(base64 => ({ base64, mime } as Image)),
+    )
+  }
 }
 
 function toBase64(buffer: ArrayBuffer) {
-    let appendCode = (xs: string, code: number) => xs + String.fromCharCode(code)
-    let binary = new Uint8Array(buffer).reduce(appendCode, '')
+  let appendCode = (xs: string, code: number) => xs + String.fromCharCode(code)
+  let binary = new Uint8Array(buffer).reduce(appendCode, '')
 
-    return btoa(binary)
+  return btoa(binary)
 }

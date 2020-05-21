@@ -1,11 +1,11 @@
 {
-    "version": "independent",
-    "npmClient": "npm",
-    "command": {
-      "publish": {
-        "ignoreChanges": ["*.md"],
-        "message": "chore(release): publish"
-      }
-    },
-    "packages": ["packages/*"]
+  "version": "independent",
+  "npmClient": "npm",
+  "command": {
+    "publish": {
+      "ignoreChanges": ["*.md"],
+      "message": "chore(release): publish"
+    }
+  },
+  "packages": ["packages/*"]
 }

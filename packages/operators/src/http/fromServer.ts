@@ -6,7 +6,7 @@ export type ServerEvent =
     | { type: 'listening' }
 
 export const fromServer = (server: net.Server) => fromEventEmitter<ServerEvent>(server, {
-    complete: ['close'],
-    error: ['error'],
-    next: ['connection', 'listening'],
+  complete: ['close'],
+  error: ['error'],
+  next: ['connection', 'listening'],
 })

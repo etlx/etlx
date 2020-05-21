@@ -1,56 +1,56 @@
-import { ls } from './ls'
 import { toArray, map } from 'rxjs/operators'
+import { ls } from './ls'
 
 const testdir = `${__dirname}/test/ls`
 
 describe('ls', () => {
-    it('can list', async () => {
-        const $ = ls(testdir)
+  it('can list', async () => {
+    let $ = ls(testdir)
 
-        const actual = await $.pipe(map(x => x.base), toArray()).toPromise()
+    let actual = await $.pipe(map(x => x.base), toArray()).toPromise()
 
-        const expected = ['1', '2', 'test.txt']
+    let expected = ['1', '2', 'test.txt']
 
-        expect(actual).toEqual(expected)
-    })
+    expect(actual).toEqual(expected)
+  })
 
-    it('can list recursively', async () => {
-        const $ = ls(testdir, { recursive: true })
+  it('can list recursively', async () => {
+    let $ = ls(testdir, { recursive: true })
 
-        const actual = await $.pipe(map(x => x.base), toArray()).toPromise()
+    let actual = await $.pipe(map(x => x.base), toArray()).toPromise()
 
-        const expected = ['1', '2', 'test.txt', '1.2', '1.txt', '2.txt', '1.2.txt']
+    let expected = ['1', '2', 'test.txt', '1.2', '1.txt', '2.txt', '1.2.txt']
 
-        expect(actual).toEqual(expected)
-    })
+    expect(actual).toEqual(expected)
+  })
 
-    it('return input on file path', async () => {
-        const $ = ls(`${testdir}/test.txt`)
+  it('return input on file path', async () => {
+    let $ = ls(`${testdir}/test.txt`)
 
-        const actual = await $.pipe(map(x => x.base), toArray()).toPromise()
+    let actual = await $.pipe(map(x => x.base), toArray()).toPromise()
 
-        const expected = ['test.txt']
+    let expected = ['test.txt']
 
-        expect(actual).toEqual(expected)
-    })
+    expect(actual).toEqual(expected)
+  })
 
-    it('throw unexisting file', async () => {
-        const $ = ls('./unknow/dir')
+  it('throw unexisting file', async () => {
+    let $ = ls('./unknow/dir')
 
-        const actual = $.pipe(toArray()).toPromise()
+    let actual = $.pipe(toArray()).toPromise()
 
-        await expect(actual).rejects.toThrowError("ENOENT: no such file or directory, lstat './unknow/dir'")
-    })
+    await expect(actual).rejects.toThrowError("ENOENT: no such file or directory, lstat './unknow/dir'")
+  })
 
-    it('throw on null', () => {
-        const actual = () => ls(null as any)
+  it('throw on null', () => {
+    let actual = () => ls(null as any)
 
-        expect(actual).toThrowError('basePath must be string')
-    })
+    expect(actual).toThrowError('basePath must be string')
+  })
 
-    it('throw on undefined', () => {
-        const actual = () => ls(undefined as any)
+  it('throw on undefined', () => {
+    let actual = () => ls(undefined as any)
 
-        expect(actual).toThrowError('basePath must be string')
-    })
+    expect(actual).toThrowError('basePath must be string')
+  })
 })

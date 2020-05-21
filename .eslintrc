@@ -1,0 +1,30 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "prefer-let"
+  ],
+  "extends": [
+    "airbnb-typescript/base"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "prefer-let/prefer-let": "error",
+    "no-plusplus": "off",
+    "max-classes-per-file": "off",
+    "no-confusing-arrow": "off",
+    "implicit-arrow-linebreak": "off",
+    "object-curly-newline": ["error", { "multiline": true, "consistent": true }],
+    "arrow-parens": ["warn", "as-needed", { "requireForBlockBody": true }],
+    "no-else-return": "off",
+    "prefer-const": "off",
+    "import/prefer-default-export": "off",
+    "max-len": "off",
+    "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
+    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/semi": ["error", "never"]
+  }
+}

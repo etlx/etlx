@@ -18,7 +18,7 @@ export function split<TIn, A, B, C, D, E, F, G, H, TOut>(o1: O<TIn, A>, o2: O<A,
 export function split<TIn, TOut>(...operators: OperatorFunction<any, any>[]): R<TIn, TOut>
 
 export function split(...operators: O<any, any>[]): O<any, any> {
-    let f = pipeFromArray(operators)
+  let f = pipeFromArray(operators)
 
-    return $ => zip($, f($))
+  return $ => zip($, f($))
 }

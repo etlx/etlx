@@ -1,7 +1,7 @@
+import { JSDOM } from 'jsdom'
 import { mockFetch, returnOnce, faultyResponse } from '../@internal/testing/fetch'
 import { inlineImages } from './inlineImages'
 import { promisifyLast } from '../@internal/utils'
-import { JSDOM } from 'jsdom'
 import { invalidMediaType } from '../http'
 
 const host = 'http://example.com'
@@ -10,77 +10,78 @@ const png = 'image/png'
 const sut = promisifyLast(inlineImages)
 const body = (dom: JSDOM) => dom.window.document.body.innerHTML
 const respondWithImage = (contentType: string) => Promise.resolve(
-    new Response('img-bytes', {
-        headers: { 'content-type': contentType }
-    }))
+  new Response('img-bytes', {
+    headers: { 'content-type': contentType },
+  }),
+)
 
 describe('inlineImages', () => {
-    it('inline single image', async () => {
-        mockFetch(returnOnce(respondWithImage(png)))
+  it('inline single image', async () => {
+    mockFetch(returnOnce(respondWithImage(png)))
 
-        let init = '<img src="img.png">'
+    let init = '<img src="img.png">'
 
-        let actual = await sut(init, { host }).then(body)
-        let expected = '<img src="data:image/png;base64, aW1nLWJ5dGVz">'
+    let actual = await sut(init, { host }).then(body)
+    let expected = '<img src="data:image/png;base64, aW1nLWJ5dGVz">'
 
-        expect(actual).toEqual(expected)
+    expect(actual).toEqual(expected)
+  })
+
+  it('inline multiple images', async () => {
+    mockFetch((x) => {
+      returnOnce(respondWithImage(png))(x)
+      returnOnce(respondWithImage(png))(x)
+
+      return x
     })
 
-    it('inline multiple images', async () => {
-        mockFetch(x => {
-            returnOnce(respondWithImage(png))(x)
-            returnOnce(respondWithImage(png))(x)
+    let init = '<img src="img.png"><img src="img2.png">'
 
-            return x
-        })
+    let actual = await sut(init, { host }).then(body)
+    let expected = '<img src="data:image/png;base64, aW1nLWJ5dGVz">'
+                     + '<img src="data:image/png;base64, aW1nLWJ5dGVz">'
 
-        let init = '<img src="img.png"><img src="img2.png">'
+    expect(actual).toEqual(expected)
+  })
 
-        let actual = await sut(init, { host }).then(body)
-        let expected = '<img src="data:image/png;base64, aW1nLWJ5dGVz">' +
-                       '<img src="data:image/png;base64, aW1nLWJ5dGVz">'
+  it('preserve non-images', async () => {
+    let init = '<h1>Title</h1><p class="text">Text</p>'
 
-        expect(actual).toEqual(expected)
-    })
+    let actual = await sut(init, { host }).then(body)
+    let expected = init
 
-    it('preserve non-images', async () => {
-        let init = '<h1>Title</h1><p class="text">Text</p>'
+    expect(actual).toEqual(expected)
+  })
 
-        let actual = await sut(init, { host }).then(body)
-        let expected = init
+  it('throw on invalid images', async () => {
+    mockFetch(returnOnce(respondWithImage('text/plain')))
 
-        expect(actual).toEqual(expected)
-    })
+    let init = '<img src="img.png">'
 
-    it('throw on invalid images', async () => {
-        mockFetch(returnOnce(respondWithImage('text/plain')))
+    let actual = sut(init, { host }).then(body)
 
-        let init = '<img src="img.png">'
+    await expect(actual).rejects.toThrow(invalidMediaType('text/plain', 'image/*'))
+  })
 
-        let actual = sut(init, { host }).then(body)
+  it('skip faulty response', async () => {
+    mockFetch(returnOnce(faultyResponse()))
 
-        await expect(actual).rejects.toThrow(invalidMediaType('text/plain', 'image/*'))
-    })
+    let init = '<img src="img.png">'
 
-    it('skip faulty response', async () => {
-        mockFetch(returnOnce(faultyResponse()))
+    let actual = await sut(init, { host, skipOnError: true }).then(body)
+    let expected = init
 
-        let init = '<img src="img.png">'
+    expect(actual).toEqual(expected)
+  })
 
-        let actual = await sut(init, { host, skipOnError: true }).then(body)
-        let expected = init
+  it('skip invalid images', async () => {
+    mockFetch(returnOnce(respondWithImage('text/plain')))
 
-        expect(actual).toEqual(expected)
-    })
+    let init = '<img src="img.png">'
 
-    it('skip invalid images', async () => {
-        mockFetch(returnOnce(respondWithImage('text/plain')))
+    let actual = await sut(init, { host, skipOnError: true }).then(body)
+    let expected = init
 
-        let init = '<img src="img.png">'
-
-        let actual = await sut(init, { host, skipOnError: true }).then(body)
-        let expected = init
-
-        expect(actual).toEqual(expected)
-    })
+    expect(actual).toEqual(expected)
+  })
 })

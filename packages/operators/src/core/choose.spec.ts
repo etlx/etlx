@@ -1,52 +1,50 @@
 import { of } from 'rxjs'
-import { choose } from './choose'
 import { map } from 'rxjs/operators'
+import { choose } from './choose'
 
 describe('choose', () => {
-    it('single operator, true condition', async () => {
-        const source = of(41)
+  it('single operator, true condition', async () => {
+    let source = of(41)
 
-        const expected = 42
-        const actual = await source.pipe(choose(true, map(x => x + 1))).toPromise()
+    let expected = 42
+    let actual = await source.pipe(choose(true, map(x => x + 1))).toPromise()
 
-        expect(actual).toEqual(expected)
+    expect(actual).toEqual(expected)
+  })
 
-    })
+  it('single operator, false condition', async () => {
+    let source = of(42)
 
-    it('single operator, false condition', async () => {
-        const source = of(42)
+    let expected = 42
+    let actual = await source.pipe(choose(false, map(x => x + 1))).toPromise()
 
-        const expected = 42
-        const actual = await source.pipe(choose(false, map(x => x + 1))).toPromise()
+    expect(actual).toEqual(expected)
+  })
 
-        expect(actual).toEqual(expected)
-    })
+  it('two operators, true condition', async () => {
+    let source = of(41)
 
-    it('two operators, true condition', async () => {
-        const source = of(41)
+    let expected = 42
+    let actual = await source.pipe(choose(true, map(x => x + 1), map(x => x - 1))).toPromise()
 
-        const expected = 42
-        const actual = await source.pipe(choose(true, map(x => x + 1), map(x => x - 1))).toPromise()
+    expect(actual).toEqual(expected)
+  })
 
-        expect(actual).toEqual(expected)
+  it('two operators, false condition', async () => {
+    let source = of(43)
 
-    })
+    let expected = 42
+    let actual = await source.pipe(choose(false, map(x => x + 1), map(x => x - 1))).toPromise()
 
-    it('two operators, false condition', async () => {
-        const source = of(43)
+    expect(actual).toEqual(expected)
+  })
 
-        const expected = 42
-        const actual = await source.pipe(choose(false, map(x => x + 1), map(x => x - 1))).toPromise()
+  it('different return types', async () => {
+    let source = of(42)
 
-        expect(actual).toEqual(expected)
-    })
+    let expected = '42'
+    let actual = await source.pipe(choose(false, map(x => x + 1), map(x => x.toString(10)))).toPromise()
 
-    it('different return types', async () => {
-        const source = of(42)
-
-        const expected = '42'
-        const actual = await source.pipe(choose(false, map(x => x + 1), map(x => x.toString(10)))).toPromise()
-
-        expect(actual).toEqual(expected)
-    })
+    expect(actual).toEqual(expected)
+  })
 })

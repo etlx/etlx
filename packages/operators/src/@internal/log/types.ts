@@ -4,8 +4,8 @@ export type LoggerConfig = { logger?: LoggerInternal }
 
 type LogFunction = (msg: string | Error) => void
 export type Logger = {
-    debug: LogFunction,
-    info: LogFunction,
-    warn: LogFunction,
-    error: LogFunction,
+  debug: LogFunction,
+  info: LogFunction,
+  warn: LogFunction,
+  error: LogFunction,
 }

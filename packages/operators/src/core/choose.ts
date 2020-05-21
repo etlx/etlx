@@ -11,9 +11,9 @@ export function choose<A>(condition: (() => Scalar) | Scalar, ifTrue: OperatorFu
 export function choose<A, B>(condition: (() => Scalar) | Scalar, ifTrue: OperatorFunction<A, B>, ifFalse: OperatorFunction<A, B>): OperatorFunction<A, B>
 export function choose<A, B, C>(condition: (() => Scalar) | Scalar, ifTrue: OperatorFunction<A, B>, ifFalse: OperatorFunction<A, C>): OperatorFunction<A, B | C>
 export function choose(condition: (() => Scalar) | Scalar, ifTrue: Op<any, any>, ifFalse?: Op<any, any>) {
-    return (
-        truthy(condition) ? pipe(ifTrue)
-        : ifFalse ? pipe(ifFalse)
-        : identity
-    )
+  if (truthy(condition)) {
+    return pipe(ifTrue)
+  } else {
+    return ifFalse ? pipe(ifFalse) : identity
+  }
 }

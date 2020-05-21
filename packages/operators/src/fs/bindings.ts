@@ -25,8 +25,8 @@ export const unlink: Unlink = bindNodeCallback(fs.unlink)
 
 
 type ReadFileOptions = {
-    encoding?: string,
-    flag?: string | undefined;
+  encoding?: string,
+  flag?: string | undefined;
 }
 type ReadFile = (path: fs.PathLike, opts?: ReadFileOptions) => Observable<string | Buffer>
 export const readFile: ReadFile = bindNodeCallback(fs.readFile)

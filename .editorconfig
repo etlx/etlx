@@ -1,0 +1,11 @@
+###############################
+# Core EditorConfig Options   #
+###############################
+
+root = true
+
+# All files
+[*]
+indent_style = space
+indent_size = 2
+
