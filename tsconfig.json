@@ -18,8 +18,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "@etlx/operators/*": ["./packages/operators/src/*"],
-      "@etlx/cli/*": ["./packages/cli/src/*"]
+      "@etlx/operators/*": ["./packages/operators/*", "./packages/operators/src/*"],
+      "@etlx/cli/*": ["./packages/cli/*", "./packages/cli/src/*"]
     }
   },
   "exclude": [
