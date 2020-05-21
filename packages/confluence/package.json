@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "pack": "tsc --outDir .",
+    "pack": "tsc --outDir . --listEmittedFiles",
     "test": "jest",
     "lint": "tslint --project ."
   },
