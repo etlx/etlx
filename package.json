@@ -8,11 +8,12 @@
   },
   "scripts": {
     "install": "lerna bootstrap --hoist",
-    "lock": "lerna bootstrap",
     "clean": "shx rm -rf ./packages/**/dist",
     "build": "npm run clean && lerna run build",
     "pack": "npm run clean && lerna run pack",
-    "publish": "npm run pack && lerna publish",
+    "prepublishOnly": "npm run pack | node scripts/track",
+    "publish": "lerna publish",
+    "postpublish": "cat build.out | node scripts/rm && node scripts/rmdir ./packages && rm build.out",
     "test": "jest",
     "lint": "eslint packages --ext .js,.ts"
   },
