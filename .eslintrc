@@ -19,12 +19,12 @@
     "implicit-arrow-linebreak": "off",
     "object-curly-newline": ["error", { "multiline": true, "consistent": true }],
     "arrow-parens": ["warn", "as-needed", { "requireForBlockBody": true }],
-    "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
-    "@typescript-eslint/indent": [2, 4],
-    "@typescript-eslint/semi": [2, "never"],
     "no-else-return": "off",
     "prefer-const": "off",
     "import/prefer-default-export": "off",
-    "max-len": "off"
+    "max-len": "off",
+    "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
+    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/semi": ["error", "never"]
   }
 }

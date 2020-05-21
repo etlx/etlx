@@ -9,40 +9,40 @@ import { buildCommands } from '../commands/utils'
 const NODE_MIN_ARGS = 2
 
 export const etlx = (...opts: Configure<EtlxOptions>[]) => {
-    let init: EtlxOptions = {
-        commands: [],
-        configurations: [],
-        observables: [],
-    }
+  let init: EtlxOptions = {
+    commands: [],
+    configurations: [],
+    observables: [],
+  }
 
-    let context = pipeConfigure(opts)(init)
+  let context = pipeConfigure(opts)(init)
 
-    let cli = catchConfigurationError(() => buildCommands(context))
+  let cli = catchConfigurationError(() => buildCommands(context))
 
-    return etlxRunner(cli)
+  return etlxRunner(cli)
 }
 
 function etlxRunner(cli: commander.Command) {
-    return (argv: string[] = process.argv) => {
-        catchConfigurationError(() => cli.parse(argv))
+  return (argv: string[] = process.argv) => {
+    catchConfigurationError(() => cli.parse(argv))
 
-        if (argv.length <= NODE_MIN_ARGS) {
-            cli.outputHelp()
-            process.exitCode = 1
-        }
+    if (argv.length <= NODE_MIN_ARGS) {
+      cli.outputHelp()
+      process.exitCode = 1
     }
+  }
 }
 
 // eslint-disable-next-line consistent-return
 function catchConfigurationError<T>(f: () => T): T {
-    try {
-        return f()
-    } catch (e) {
-        if (e instanceof ConfigurationError) {
-            process.stderr.write(e.toString())
-            process.exit(1)
-        } else {
-            throw e
-        }
+  try {
+    return f()
+  } catch (e) {
+    if (e instanceof ConfigurationError) {
+      process.stderr.write(e.toString())
+      process.exit(1)
+    } else {
+      throw e
     }
+  }
 }

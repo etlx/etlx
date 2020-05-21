@@ -8,45 +8,45 @@ import { respondWith, page, dataPage, confluence } from './@internal/testing'
 const sut = promisify(getSpaceContent)
 
 describe('getSpaceContent', () => {
-    it('can get single page', async () => {
-        mockFetch(respondWith(page()))
+  it('can get single page', async () => {
+    mockFetch(respondWith(page()))
 
-        let expected = [page()]
+    let expected = [page()]
 
-        let actual = await await sut('space', { confluence })
+    let actual = await await sut('space', { confluence })
 
-        expect(actual).toEqual(expected)
+    expect(actual).toEqual(expected)
+  })
+
+  it('can paginate', async () => {
+    mockFetch((mock) => {
+      let data = dataPage(page())
+      let r1 = jsonResponse({ ...data, size: 2 })
+      let r2 = jsonResponse({ ...data, size: 0 })
+
+      return mock.mockReturnValueOnce(r1).mockReturnValueOnce(r2)
     })
 
-    it('can paginate', async () => {
-        mockFetch((mock) => {
-            let data = dataPage(page())
-            let r1 = jsonResponse({ ...data, size: 2 })
-            let r2 = jsonResponse({ ...data, size: 0 })
+    let expected = [page(), page()]
 
-            return mock.mockReturnValueOnce(r1).mockReturnValueOnce(r2)
-        })
+    let actual = await await sut('space', { confluence })
 
-        let expected = [page(), page()]
+    expect(actual).toEqual(expected)
+  })
 
-        let actual = await await sut('space', { confluence })
+  it('can make correct Confluence request', async () => {
+    let { mock } = mockFetch(respondWith(page()))
 
-        expect(actual).toEqual(expected)
-    })
+    await sut('space', { confluence })
 
-    it('can make correct Confluence request', async () => {
-        let { mock } = mockFetch(respondWith(page()))
+    expect(mock.calls).toHaveLength(1)
 
-        await sut('space', { confluence })
+    let [request] = mock.calls[0]
+    let requestUrl = typeof request === 'string' ? request : request.url
+    let { path: actual } = url.parse(requestUrl)
 
-        expect(mock.calls).toHaveLength(1)
+    let expected = '/rest/api/content?spaceKey=space&start=0&limit=20&type=page&status=current'
 
-        let [request] = mock.calls[0]
-        let requestUrl = typeof request === 'string' ? request : request.url
-        let { path: actual } = url.parse(requestUrl)
-
-        let expected = '/rest/api/content?spaceKey=space&start=0&limit=20&type=page&status=current'
-
-        expect(actual).toEqual(expected)
-    })
+    expect(actual).toEqual(expected)
+  })
 })

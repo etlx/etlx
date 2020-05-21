@@ -10,30 +10,30 @@ const parseJson = (x: string) => JSON.parse(x)
 const stringify = (x: any) => JSON.stringify(x)
 
 export type FilestoreOptions = {
-    validate?: Validator<fs.Stats>,
+  validate?: Validator<fs.Stats>,
 }
 
 export function filestore<T>(filepath: string, options?: FilestoreOptions): Store<T> {
-    let opts = options || {}
-    let validate = opts.validate || empty<fs.Stats>()
+  let opts = options || {}
+  let validate = opts.validate || empty<fs.Stats>()
 
-    return {
-        exists: () => lstat(filepath).pipe(
-            catchError(() => of(false)),
-            map(x => typeof x === 'boolean' ? x : validate(x).ok),
-        ),
-        read: () => fromFileStream(filepath, { readline: true }).pipe(
-            map<string, T>(parseJson),
-        ),
-        write: ($: Observable<T>) => $.pipe(
-            streamIntoFile(filepath, { value: stringify }),
-        ),
-    }
+  return {
+    exists: () => lstat(filepath).pipe(
+      catchError(() => of(false)),
+      map(x => typeof x === 'boolean' ? x : validate(x).ok),
+    ),
+    read: () => fromFileStream(filepath, { readline: true }).pipe(
+      map<string, T>(parseJson),
+    ),
+    write: ($: Observable<T>) => $.pipe(
+      streamIntoFile(filepath, { value: stringify }),
+    ),
+  }
 }
 
 
 export const notOlderThan = (ms: number): Validator<fs.Stats> =>
-    stats => Date.now() - stats.mtimeMs <= ms ? ok() : error()
+  stats => Date.now() - stats.mtimeMs <= ms ? ok() : error()
 
 export const notEmpty = (): Validator<fs.Stats> =>
-    stats => stats.size > 0 ? ok() : error()
+  stats => stats.size > 0 ? ok() : error()

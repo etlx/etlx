@@ -8,40 +8,40 @@ import { ConfluencePageBody } from './types'
 import { getPageBody, updateBody } from './utils'
 
 export type NormalizeBodyOptions = LoggerConfig & {
-    confluence: { host: string },
-    inlineImages?: boolean,
+  confluence: { host: string },
+  inlineImages?: boolean,
 }
 
 type Page = { body?: ConfluencePageBody }
 
 const cleanAttributes = (host: string) => ($: Observable<string>) => $.pipe(
-    forEachAttribute((attr, parent) => {
-        switch (attr.name) {
-            case 'src':
-            case 'href':
-                // eslint-disable-next-line no-param-reassign
-                attr.value = formatUrl(attr.value, { host, preserveAbsoluteUrls: true })
-                return
-            default:
-                parent.removeAttribute(attr.name)
-        }
-    }),
+  forEachAttribute((attr, parent) => {
+    switch (attr.name) {
+      case 'src':
+      case 'href':
+        // eslint-disable-next-line no-param-reassign
+        attr.value = formatUrl(attr.value, { host, preserveAbsoluteUrls: true })
+        return
+      default:
+        parent.removeAttribute(attr.name)
+    }
+  }),
 )
 
 const cleanHtml = (opts: NormalizeBodyOptions) => ($: Observable<string>) => $.pipe(
-    cleanAttributes(opts.confluence.host),
-    choose(opts.inlineImages, inlineImages(opts.confluence)),
-    minify(),
+  cleanAttributes(opts.confluence.host),
+  choose(opts.inlineImages, inlineImages(opts.confluence)),
+  minify(),
 )
 
 export function normalizeBody<T extends Page>(opts: NormalizeBodyOptions): OperatorFunction<T, T> {
-    return $ => $.pipe(
-        log(opts, 'Normalizing page body', 'confluence'),
-        mergeMap(page => of(getPageBody(page)).pipe(
-            cleanHtml(opts),
-            stringifyBody(),
-            map(updateBody(page)),
-        )),
-        log(opts, 'Page body normalized', 'confluence'),
-    )
+  return $ => $.pipe(
+    log(opts, 'Normalizing page body', 'confluence'),
+    mergeMap(page => of(getPageBody(page)).pipe(
+      cleanHtml(opts),
+      stringifyBody(),
+      map(updateBody(page)),
+    )),
+    log(opts, 'Page body normalized', 'confluence'),
+  )
 }

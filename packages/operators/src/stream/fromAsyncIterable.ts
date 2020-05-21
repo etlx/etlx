@@ -1,22 +1,22 @@
 import { Observable } from 'rxjs'
 
 export function fromAsyncIterable<T = any>(readable: AsyncIterable<T>): Observable<T> {
-    let iterate = createtIterator(readable)
+  let iterate = createtIterator(readable)
 
-    return new Observable<T>((obs) => {
-        let next = obs.next.bind(obs)
-        let complete = obs.complete.bind(obs)
-        let error = obs.error.bind(obs)
+  return new Observable<T>((obs) => {
+    let next = obs.next.bind(obs)
+    let complete = obs.complete.bind(obs)
+    let error = obs.error.bind(obs)
 
-        iterate(next).then(complete).catch(error)
-    })
+    iterate(next).then(complete).catch(error)
+  })
 }
 
 function createtIterator<T>(readable: AsyncIterable<T>) {
-    return async (f: (x: T) => void) => {
-        // eslint-disable-next-line no-restricted-syntax
-        for await (let item of readable) {
-            f(item)
-        }
+  return async (f: (x: T) => void) => {
+    // eslint-disable-next-line no-restricted-syntax
+    for await (let item of readable) {
+      f(item)
     }
+  }
 }

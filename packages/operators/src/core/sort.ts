@@ -15,36 +15,36 @@ export const ascendingSeq = composeSort(gtSeq)
 export const descendingSeq = composeSort(ltSeq)
 
 export function composeSort<B = any>(compare: SortFn<B>) {
-    return function inner<A>(select?: (a: A) => B) {
-        let f = select || identity as any
-        return (a: A, b: A) => compare(f(a), f(b))
-    }
+  return function inner<A>(select?: (a: A) => B) {
+    let f = select || identity as any
+    return (a: A, b: A) => compare(f(a), f(b))
+  }
 }
 
 export function combineSort<T>(...fns: SortFn<T>[]): SortFn<T> {
-    return (a, b) => fns.reduce(
-        (n, f) => n === 0 ? f(a, b) : n,
-        0,
-    )
+  return (a, b) => fns.reduce(
+    (n, f) => n === 0 ? f(a, b) : n,
+    0,
+  )
 }
 
 export function sort<A>(f: (a: A, b: A) => number): OperatorFunction<A, A> {
-    return pipe(
-        toArray(),
-        map(xs => xs.sort(f)),
-        mergeMap(from),
-    )
+  return pipe(
+    toArray(),
+    map(xs => xs.sort(f)),
+    mergeMap(from),
+  )
 }
 
 
 function compareArrays(a: any[], b: any[]) {
-    if (a.length > b.length) return 1
-    if (b.length > a.length) return -1
+  if (a.length > b.length) return 1
+  if (b.length > a.length) return -1
 
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] > b[i]) return 1
-        if (b[i] > a[i]) return -1
-    }
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] > b[i]) return 1
+    if (b[i] > a[i]) return -1
+  }
 
-    return 0
+  return 0
 }

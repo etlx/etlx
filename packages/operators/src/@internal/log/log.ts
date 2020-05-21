@@ -6,15 +6,15 @@ import { createLogger } from './createLogger'
 
 
 export function log<T>(
-    config: LoggerConfig,
-    msg: string | ((l: Logger, x: T) => void),
-    name?: string,
+  config: LoggerConfig,
+  msg: string | ((l: Logger, x: T) => void),
+  name?: string,
 ): OperatorFunction<T, T> {
-    let logger = createLogger(config, name)
+  let logger = createLogger(config, name)
 
-    let sideffect = typeof msg === 'function'
-        ? (x: T) => msg(logger, x)
-        : () => logger.info(msg)
+  let sideffect = typeof msg === 'function'
+    ? (x: T) => msg(logger, x)
+    : () => logger.info(msg)
 
-    return ($: Observable<T>) => $.pipe(tap(sideffect))
+  return ($: Observable<T>) => $.pipe(tap(sideffect))
 }

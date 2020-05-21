@@ -3,12 +3,12 @@ import { Observable } from '../utils/observable'
 export type EtlxOperator = (config: any) => Observable<any>
 
 export type EtlxOperatorContext = {
-    observables: InternalOperator[],
+  observables: InternalOperator[],
 }
 
 export type InternalOperator = {
-    name?: string,
-    observable: EtlxOperator,
+  name?: string,
+  observable: EtlxOperator,
 }
 
 export type EtlxOperatorVariant =

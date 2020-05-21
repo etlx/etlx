@@ -5,11 +5,11 @@ import { configure } from '../configuration'
 import { observe } from '../observe'
 
 describe('etlx', () => {
-    it('configuration functions must not mutate builder', () => {
-        expect(
-            etlx() === etlx(configure(identity))
+  it('configuration functions must not mutate builder', () => {
+    expect(
+      etlx() === etlx(configure(identity))
             || etlx() === etlx(observe(of(42)))
             || etlx() === etlx(commands(identity)),
-        ).toBeFalsy()
-    })
+    ).toBeFalsy()
+  })
 })

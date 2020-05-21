@@ -7,4 +7,4 @@ const globObservable: Glob = bindNodeCallback(globCallback)
 
 export type GlobOptions = IOptions
 export const glob = (pattern: string, opts?: GlobOptions): Observable<string> =>
-    globObservable(pattern, opts).pipe(mergeMap(from))
+  globObservable(pattern, opts).pipe(mergeMap(from))
