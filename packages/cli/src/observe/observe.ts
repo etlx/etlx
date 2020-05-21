@@ -1,9 +1,9 @@
 import { isObservable } from '../utils/observable'
-import { EtlxOptions } from '../builder/types'
-import { EtlxOperatorVariant, EtlxOperator } from './types'
+import { EtlxOperatorVariant, EtlxOperator, EtlxOperatorContext } from './types'
 
 
-export const observe = (obs: EtlxOperatorVariant, name?: string) => (opts: EtlxOptions): EtlxOptions => {
+// eslint-disable-next-line arrow-parens
+export const observe = (obs: EtlxOperatorVariant, name?: string) => <T extends EtlxOperatorContext>(opts: T): T => {
     let observable = toOperator(obs)
 
     return ({

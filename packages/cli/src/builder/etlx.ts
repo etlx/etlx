@@ -2,10 +2,11 @@ import commander from 'commander'
 import { Configure, pipeConfigure } from '../utils'
 
 import { ConfigurationError } from '../configuration'
-import { EtlxOptions } from './types'
+import { EtlxOptions } from '../types'
 
 import { buildCommands } from '../commands/utils'
 
+const NODE_MIN_ARGS = 2
 
 export const etlx = (...opts: Configure<EtlxOptions>[]) => {
     let init: EtlxOptions = {
@@ -22,8 +23,6 @@ export const etlx = (...opts: Configure<EtlxOptions>[]) => {
 }
 
 function etlxRunner(cli: commander.Command) {
-    const NODE_MIN_ARGS = 2
-
     return (argv: string[] = process.argv) => {
         catchConfigurationError(() => cli.parse(argv))
 
@@ -34,12 +33,13 @@ function etlxRunner(cli: commander.Command) {
     }
 }
 
+// eslint-disable-next-line consistent-return
 function catchConfigurationError<T>(f: () => T): T {
     try {
         return f()
     } catch (e) {
         if (e instanceof ConfigurationError) {
-            console.error(e.toString())
+            process.stderr.write(e.toString())
             process.exit(1)
         } else {
             throw e

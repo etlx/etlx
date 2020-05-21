@@ -68,7 +68,6 @@ describe('createPipeline', () => {
 })
 
 
-
 function testSequential<T = any>(pipes: { [name: string]: EtlxOperator }, filter?: string[]): Observable<T> {
     let pipeline = mapObjPipesToArray(pipes)
 

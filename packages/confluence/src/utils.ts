@@ -29,18 +29,18 @@ export function inferBodyRepresentation(page: Page): ConfluencePageBodyType | un
 }
 
 export function getPageBody(page: Page): string {
-    const field = inferBodyRepresentation(page)
+    let field = inferBodyRepresentation(page)
     if (field === undefined) {
         return ''
     }
 
-    const body =  page.body![field]
+    let body = page.body![field]
 
     return body === undefined ? '' : body.value
 }
 
 export const updateBody = <T extends Page>(page: T) => (value: string) => {
-    const representation = inferBodyRepresentation(page)
+    let representation = inferBodyRepresentation(page)
 
     return representation === undefined ? page : {
         ...page,

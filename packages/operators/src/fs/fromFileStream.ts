@@ -1,8 +1,8 @@
 import fs from 'fs'
 import readline from 'readline'
 import { Observable } from 'rxjs'
-import { fromAsyncIterable } from '../stream'
 import { finalize, map } from 'rxjs/operators'
+import { fromAsyncIterable } from '../stream'
 
 export type StreamFromFileOptions = {
     readline?: boolean,

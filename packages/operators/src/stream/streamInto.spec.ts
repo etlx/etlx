@@ -1,10 +1,11 @@
-import stream from 'stream'
-import { streamInto } from './streamInto'
 import { of, interval, concat } from 'rxjs'
 import { toArray, take, map } from 'rxjs/operators'
+import stream from 'stream'
+import { streamInto } from './streamInto'
 
 class MemoryStream extends stream.Writable {
     private buffer: Buffer
+
     private delay: number
 
     constructor(options?: stream.WritableOptions & { delay?: number }) {
@@ -16,12 +17,16 @@ class MemoryStream extends stream.Writable {
         this.buffer = Buffer.from('')
     }
 
+    // eslint-disable-next-line no-underscore-dangle
     public _write(chunk: any, encoding: string, callback: (error?: Error | null) => void) {
         this.writeAsync(chunk, encoding, callback)
     }
 
     public writeAsync(chunk: any, encoding: string, callback: (error?: Error | null) => void) {
-        setTimeout(this.writeSync.bind(this, chunk, encoding, callback), this.delay)
+        setTimeout(
+            () => this.writeSync(chunk, encoding, callback),
+            this.delay,
+        )
     }
 
     public writeSync(chunk: any, encoding: string, callback: (error?: Error | null) => void) {

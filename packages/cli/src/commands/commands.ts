@@ -1,7 +1,6 @@
-import { EtlxOptions } from '../builder'
-import { EtlxCliCommand } from './types'
+import { EtlxCliCommand, EtlxCliCommandContext } from './types'
 
-export const commands = (...cmd: EtlxCliCommand[]) => (opts: EtlxOptions): EtlxOptions => ({
+export const commands = (...cmd: EtlxCliCommand[]) => <T extends EtlxCliCommandContext>(opts: T): T => ({
     ...opts,
     commands: [...opts.commands, ...cmd],
 })

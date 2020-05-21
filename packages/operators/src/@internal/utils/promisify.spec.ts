@@ -1,6 +1,6 @@
+import { Observable, from } from 'rxjs'
+import { map, mergeMap } from 'rxjs/operators'
 import { promisify, promisifyLast } from './promisify'
-import { Observable, from } from "rxjs"
-import { map, mergeMap } from "rxjs/operators"
 
 describe('promisify', () => {
     it('operator with 0 options', () => {
@@ -51,7 +51,7 @@ describe('promisify', () => {
         let repeat$ = (times: number) => ($: Observable<number>) =>
             $.pipe(mergeMap(x => from(new Array<number>(times).fill(x))))
 
-        let repeat = promisify(repeat$);
+        let repeat = promisify(repeat$)
 
         let actual = repeat(42, 3)
         let expected = Promise.resolve([42, 42, 42])
@@ -109,7 +109,7 @@ describe('promisifyLast', () => {
         let repeat$ = (times: number) => ($: Observable<number>) =>
             $.pipe(mergeMap(x => from(new Array<number>(times).fill(x))))
 
-        let repeat = promisify(repeat$);
+        let repeat = promisify(repeat$)
 
         let actual = repeat(42, 3)
         let expected = Promise.resolve(42)

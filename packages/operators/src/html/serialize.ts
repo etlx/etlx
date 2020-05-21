@@ -8,7 +8,7 @@ export const serialize = (): OperatorFunction<JSDOM, string> => stream => stream
 
 export const stringifyBody = (): OperatorFunction<JSDOM, string> => stream => stream.pipe(
     map((dom) => {
-        const body = dom.window.document.body
+        let { body } = dom.window.document
 
         if (body === null) {
             return dom.window.document.textContent || ''

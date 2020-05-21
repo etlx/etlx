@@ -8,9 +8,9 @@ type HtmlOperator = OperatorFunction<JSDOM | string, JSDOM>
 
 export const forEachAttribute = (fn: (attr: Attr, parent: HTMLElement) => void): HtmlOperator => stream => stream.pipe(
     map((input) => {
-        const dom = getDom(input)
+        let dom = getDom(input)
 
-        const traverseTree = (node: Node) => {
+        let traverseTree = (node: Node) => {
             if (isHtmlElement(node)) {
                 forEach(node.attributes, x => fn(x, node))
             }
@@ -26,10 +26,10 @@ export const forEachAttribute = (fn: (attr: Attr, parent: HTMLElement) => void):
 
 export const forEachNode = (fn: (x: Node) => void): HtmlOperator => stream => stream.pipe(
     map((input) => {
-        const dom = getDom(input)
-        const body = dom.window.document.body
+        let dom = getDom(input)
+        let { body } = dom.window.document
 
-        const traverseTree = (x: Node) => {
+        let traverseTree = (x: Node) => {
             fn(x)
             x.childNodes.forEach(traverseTree)
         }
@@ -43,14 +43,14 @@ export const forEachNode = (fn: (x: Node) => void): HtmlOperator => stream => st
 export function mapNode<T>(fn: (x: Node) => T): OperatorFunction<JSDOM | string, T> {
     return stream => stream.pipe(
         mergeMap((input) => {
-            const dom = getDom(input)
-            const body = dom.window.document.body
+            let dom = getDom(input)
+            let { body } = dom.window.document
 
-            const mapNodeResursive = (x: Node): T[] => {
-                const children = toArray(x.childNodes)
+            let mapNodeResursive = (x: Node): T[] => {
+                let children = toArray(x.childNodes)
 
-                const result = fn(x)
-                const childResults = flatten(children.map(mapNodeResursive))
+                let result = fn(x)
+                let childResults = flatten(children.map(mapNodeResursive))
 
                 return [result, ...childResults]
             }

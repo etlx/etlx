@@ -32,7 +32,6 @@ function logFilter(opts: LoggingOptions) {
 }
 
 
-
 const levels: any = {
     debug: 0,
     info: 1,

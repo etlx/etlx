@@ -14,6 +14,7 @@ export function fromAsyncIterable<T = any>(readable: AsyncIterable<T>): Observab
 
 function createtIterator<T>(readable: AsyncIterable<T>) {
     return async (f: (x: T) => void) => {
+        // eslint-disable-next-line no-restricted-syntax
         for await (let item of readable) {
             f(item)
         }

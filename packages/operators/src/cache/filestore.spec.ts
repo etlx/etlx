@@ -1,8 +1,8 @@
 import fs from 'fs'
 import path from 'path'
-import { filestore } from './filestore'
 import { from, interval, concat } from 'rxjs'
 import { toArray, map, take } from 'rxjs/operators'
+import { filestore } from './filestore'
 
 const file = (filepath: string) => fs.readFileSync(filepath, 'utf-8')
 const stringify = (x: any) => JSON.stringify(x)

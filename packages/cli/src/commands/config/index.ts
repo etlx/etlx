@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 import commander from 'commander'
 import { validateConfig, loadConfigIfExists, buildConfiguration } from '../../configuration/utils'
-import { EtlxOptions } from '../../builder'
+import { EtlxOptions } from '../../types'
 import { formatDocs, getDocs } from './docs'
 
 export const configCommand = () => (cli: commander.Command, ctx: EtlxOptions) => cli
@@ -11,26 +12,29 @@ export const configCommand = () => (cli: commander.Command, ctx: EtlxOptions) =>
         let config = buildConfiguration(ctx.configurations)
 
         switch (command) {
-            case 'doc':
-                const docs = formatDocs(getDocs(config))
+            case 'doc': {
+                let docs = formatDocs(getDocs(config))
                 console.log(docs)
                 return
-            case 'validate':
+            }
+            case 'validate': {
                 loadConfigIfExists(config, cmd.config || 'config.json')
                 try {
                     validateConfig(config)
-                    console.log('Config is valid')
+                    process.stdout.write('Config is valid')
                 } catch (e) {
                     console.error('Config is invalid:\n', e.message)
                 }
                 return
-            case 'show':
+            }
+            case 'show': {
                 loadConfigIfExists(config, cmd.config || 'config.json')
                 console.log(config.toString())
                 return
-            default:
+            }
+            default: {
                 console.error('Invalid command')
-                return
+            }
         }
     })
 

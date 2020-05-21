@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const assertNever = (_: never) => {}
 
 export function isNullOrUndefined<T>(value: T | null | undefined): value is null | undefined {

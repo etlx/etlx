@@ -43,12 +43,12 @@ function updateImage(opts: InlineImagesOptions) {
     return (node: Node) => {
         if (node.nodeName !== 'IMG') return empty()
 
-        const element = node as HTMLElement
-        const src = element.getAttribute('src')
+        let element = node as HTMLElement
+        let src = element.getAttribute('src')
 
         if (isNullOrUndefined(src)) return empty()
 
-        const resp$ = fromRequest({
+        let resp$ = fromRequest({
             url: formatUrl(src, opts),
             headers,
         })
@@ -70,20 +70,25 @@ function updateImageSrc(element: HTMLElement) {
 
 function toImage(opts: InlineImagesOptions) {
     return (response: Response) => {
-        if (!response.ok) return opts.skipOnError
-            ? empty()
-            : throwError(faultyResponse(response))
+        if (!response.ok) {
+            return opts.skipOnError
+                ? empty()
+                : throwError(faultyResponse(response))
+        }
 
         let contentType = response.headers.get('content-type') || ''
         let [mime] = contentType.split(';')
 
-        if (!contentType.startsWith('image/')) return opts.skipOnError
-            ? empty()
-            : throwError(invalidMediaType(mime, 'image/*'))
+        if (!contentType.startsWith('image/')) {
+            return opts.skipOnError
+                ? empty()
+                : throwError(invalidMediaType(mime, 'image/*'))
+        }
 
         return from(response.arrayBuffer()).pipe(
             map(toBase64),
-            map(base64 => ({ base64, mime } as Image)))
+            map(base64 => ({ base64, mime } as Image)),
+        )
     }
 }
 

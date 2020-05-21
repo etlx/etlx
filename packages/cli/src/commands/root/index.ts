@@ -25,6 +25,7 @@ export const rootCommand = (options?: RootCommandOptions) => {
         .description(opts.description || 'Rx-based ETL tool')
         .version(opts.version || '0.1.0')
         .on('command:*', () => {
+            // eslint-disable-next-line no-console
             console.error(`Invalid command: ${cli.args.join(' ')}`)
             cli.outputHelp()
             process.exit(1)

@@ -1,8 +1,7 @@
 import { Configure } from '../utils'
-import { EtlxOptions } from '../builder'
-import { ConfigurationOptions } from './types'
+import { ConfigurationOptions, ConfigurationContext } from './types'
 
-export const configure = (...xs: Configure<ConfigurationOptions>[]) => (opts: EtlxOptions): EtlxOptions => ({
+export const configure = (...xs: Configure<ConfigurationOptions>[]) => <T extends ConfigurationContext>(opts: T): T => ({
     ...opts,
     configurations: [...opts.configurations, ...xs],
 })

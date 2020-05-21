@@ -1,12 +1,12 @@
-import { forEach, getDom } from './utils'
-import { map } from 'rxjs/internal/operators/map'
 import { OperatorFunction } from 'rxjs'
+import { map } from 'rxjs/operators'
 import { JSDOM } from 'jsdom'
+import { forEach, getDom } from './utils'
 
 
 export const minify = (): OperatorFunction<JSDOM | string, JSDOM> => stream => stream.pipe(
     map((input) => {
-        const dom = getDom(input)
+        let dom = getDom(input)
 
         minifyHtml(dom.window.document)
 
@@ -35,11 +35,12 @@ const trim = (str: string) => {
 
 const processTextNode = (node: Node) => {
     if (node.nodeValue === null) {
-        return null
+        return
     }
 
-    const text = trim(node.nodeValue)
+    let text = trim(node.nodeValue)
 
+    // eslint-disable-next-line no-param-reassign
     node.nodeValue = text.length === 0 ? null : text
 }
 

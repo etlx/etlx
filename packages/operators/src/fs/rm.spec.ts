@@ -1,7 +1,7 @@
 import fs from 'fs'
+import { toArray } from 'rxjs/operators'
 import { join } from 'path'
 import { rm } from './rm'
-import { toArray } from 'rxjs/operators'
 
 const recursive = { recursive: true }
 const testdir = (...p: string[]) => join(__dirname, 'test', ...p)

@@ -1,4 +1,4 @@
-import { seconds, minutes, hours, days } from "./utils"
+import { seconds, minutes, hours, days } from './utils'
 
 type F = (x: number) => number
 const sut: [F, string, number][] = [
@@ -17,12 +17,10 @@ const data = (k: number) => [
     [NaN, NaN],
 ]
 
-describe('time/utils', () =>
-    sut.forEach(([f, name, k]) =>
-        data(k).forEach(([init, expected]) =>
-            it(`${name}(${init})`, () =>
-                expect(f(init)).toEqual(expected)
-            )
-        )
-    )
-)
+describe('time/utils', () => {
+    sut.forEach(([f, name, k]) => {
+        data(k).forEach(([init, expected]) => {
+            it(`${name}(${init})`, () => expect(f(init)).toEqual(expected))
+        })
+    })
+})

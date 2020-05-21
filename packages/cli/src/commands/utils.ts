@@ -1,8 +1,8 @@
 import commander from 'commander'
-import { EtlxOptions } from '../builder'
+import { EtlxCliCommandContext } from './types'
 
 
-export function buildCommands(ctx: EtlxOptions) {
+export function buildCommands(ctx: EtlxCliCommandContext) {
     return ctx.commands.reduce(
         (x, f) => {
             if (typeof f === 'function') {

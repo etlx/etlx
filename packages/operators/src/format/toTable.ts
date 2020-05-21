@@ -1,9 +1,9 @@
+import { isNullOrUndefined } from 'util'
 import { of, concat, identity, pipe, OperatorFunction } from 'rxjs'
 import { take, map } from 'rxjs/operators'
 
 import { choose, assert, combineVaradic } from '../core'
 import { notNullOrUndefined, ofType, Type } from '../@internal/utils'
-import { isNullOrUndefined } from 'util'
 
 export type ToTableOptions<T = any> = {
     keys?: Array<keyof T>,
@@ -14,7 +14,10 @@ export type ToTableOptions<T = any> = {
 
 const firstObjectKeys = <T>() => pipe(take<T>(1), map(Object.keys))
 
-const toHeaders = <T>(opts: ToTableOptions<T>) => {
+const unexpectedTypeError = (name: string, expectedType: string) => (x: any) =>
+    new Error(`Unexpected ${name} type. [${expectedType}] expected but [${typeof x}] received`)
+
+function toHeaders<T>(opts: ToTableOptions<T>) {
     let getHeader = (key: string): string => {
         if (opts.headers) {
             let header: string | undefined = opts.headers[key as keyof T]
@@ -35,7 +38,7 @@ const toHeaders = <T>(opts: ToTableOptions<T>) => {
 }
 
 const keyOf = <T>(x: T) => (k: string | keyof T) => x[k as keyof T]
-const mapValues = <T>(opts: ToTableOptions<T>) => {
+function mapValues<T>(opts: ToTableOptions<T>) {
     return (x: T, idx: number) => {
         let keys = opts.keys || Object.keys(x) as Array<keyof T>
 
@@ -56,7 +59,7 @@ const mapValues = <T>(opts: ToTableOptions<T>) => {
     }
 }
 
-const toRows = <T>(opts: ToTableOptions<T>) => {
+function toRows<T>(opts: ToTableOptions<T>) {
     let stringify = opts.stringify || identity
     let toValues = mapValues(opts)
     let toStrings = (xs: any[]) => xs.map(stringify)
@@ -67,11 +70,8 @@ const toRows = <T>(opts: ToTableOptions<T>) => {
     )
 }
 
-const unexpectedTypeError = (name: string, expectedType: string) => (x: any) =>
-    new Error(`Unexpected ${name} type. [${expectedType}] expected but [${typeof x}] received`)
 
-
-export const toTable = <T = any>(options?: ToTableOptions<T>): OperatorFunction<T, any[]> => {
+export function toTable<T = any>(options?: ToTableOptions<T>): OperatorFunction<T, any[]> {
     let opts = options || {}
     validateOptions(opts)
 
@@ -89,9 +89,10 @@ export const toTable = <T = any>(options?: ToTableOptions<T>): OperatorFunction<
 }
 
 
-const validateOption = <T>(x: T, key: keyof T, expectedType: Type) => {
+function validateOption<T>(x: T, key: keyof T, expectedType: Type) {
     let value = x[key]
 
+    // eslint-disable-next-line valid-typeof
     if (notNullOrUndefined(value) && typeof value !== expectedType) {
         throw unexpectedTypeError(`'${key}' option`, expectedType)(value)
     }

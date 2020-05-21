@@ -1,7 +1,7 @@
-import { promisify } from '../@internal/utils'
-import { toTable, ToTableOptions } from './toTable'
 import { from } from 'rxjs'
 import { toArray } from 'rxjs/operators'
+import { promisify } from '../@internal/utils'
+import { toTable, ToTableOptions } from './toTable'
 
 const sut = promisify(toTable)
 
@@ -86,7 +86,7 @@ describe('toTable', () => {
 
     it('values option allows mapping of incoming object', async () => {
         let init = { a: 1, b: 2, c: 3 }
-        let values = (x: any) => Object.values(x).map((x: number) => x + 1)
+        let values = (obj: any) => Object.values(obj).map((x: number) => x + 1)
 
         let actual = await sut(init, { values })
 
@@ -106,8 +106,6 @@ describe('toTable', () => {
         expect(actual).toEqual(expected)
     })
 
-
-
     it('throw on non-object values', async () => {
         let init = 42
 
@@ -117,8 +115,7 @@ describe('toTable', () => {
     })
 
     let keys: Array<keyof ToTableOptions> = ['headers', 'keys', 'values', 'stringify']
-    keys
-    .forEach(key => it(`throw on invalid ${key} option type`, () => {
+    keys.forEach(key => it(`throw on invalid ${key} option type`, () => {
         let actual = () => toTable({ [key]: 42 as any })
 
         expect(actual).toThrowError(/Unexpected '\w+' option type. \[\w+\] expected but \[\w+\] received/)

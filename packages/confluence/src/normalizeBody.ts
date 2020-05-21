@@ -19,11 +19,11 @@ const cleanAttributes = (host: string) => ($: Observable<string>) => $.pipe(
         switch (attr.name) {
             case 'src':
             case 'href':
+                // eslint-disable-next-line no-param-reassign
                 attr.value = formatUrl(attr.value, { host, preserveAbsoluteUrls: true })
                 return
             default:
                 parent.removeAttribute(attr.name)
-                return
         }
     }),
 )

@@ -13,7 +13,7 @@ export type FilestoreOptions = {
     validate?: Validator<fs.Stats>,
 }
 
-export const filestore = <T>(filepath: string, options?: FilestoreOptions): Store<T> => {
+export function filestore<T>(filepath: string, options?: FilestoreOptions): Store<T> {
     let opts = options || {}
     let validate = opts.validate || empty<fs.Stats>()
 

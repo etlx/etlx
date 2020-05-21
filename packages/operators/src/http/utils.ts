@@ -32,7 +32,7 @@ function formatRelative(url: URL) {
 }
 
 function formatQueryString(obj: QueryObject) {
-    let pairs: [string, any][] = Object.entries(obj).filter(([_, x]) => x !== undefined && x !== null)
+    let pairs: [string, any][] = Object.entries(obj).filter(([, x]) => x !== undefined && x !== null)
 
     return new URLSearchParams(pairs).toString()
 }

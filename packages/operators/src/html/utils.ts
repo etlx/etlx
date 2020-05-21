@@ -14,7 +14,7 @@ export const getDom = (input: string | any) => {
 }
 
 export function toArray<T>(source: DOMCollection<T>): T[] {
-    const result = new Array(source.length)
+    let result = new Array(source.length)
     for (let i = 0; i < source.length; i++) {
         result[i] = source.item(i)
     }
@@ -23,11 +23,11 @@ export function toArray<T>(source: DOMCollection<T>): T[] {
 }
 
 export function forEach<T>(source: DOMCollection<T>, fn: (x: T, i: number) => void) {
-    let length = source.length
+    let { length } = source
     let index = 0
 
-    while (true) {
-        const item = source.item(index)
+    while (index < length) {
+        let item = source.item(index)
         if (item === null) {
             break
         }

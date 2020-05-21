@@ -3,6 +3,7 @@ import { toArray, map, mergeMap } from 'rxjs/operators'
 
 type SortFn<T> = (a: T, b: T) => number
 
+// eslint-disable-next-line no-nested-ternary
 const gt = (a: any, b: any) => a === b ? 0 : a > b ? 1 : -1
 const lt = (a: any, b: any) => 0 - gt(a, b)
 const gtSeq = compareArrays
@@ -14,7 +15,7 @@ export const ascendingSeq = composeSort(gtSeq)
 export const descendingSeq = composeSort(ltSeq)
 
 export function composeSort<B = any>(compare: SortFn<B>) {
-    return <A>(select?: (a: A) => B) => {
+    return function inner<A>(select?: (a: A) => B) {
         let f = select || identity as any
         return (a: A, b: A) => compare(f(a), f(b))
     }

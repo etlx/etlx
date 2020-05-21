@@ -6,6 +6,5 @@ export const cache = <T>(data: OperatorFunction<void, T>, store: Store<T>) =>
     store.exists().pipe(
         concatMap(exists => exists
             ? store.read()
-            : of(undefined).pipe(data, store.write),
-        ),
+            : of(undefined).pipe(data, store.write)),
     )

@@ -1,4 +1,4 @@
-import { basicCredentials, authBasic, formatUrl } from "./utils"
+import { basicCredentials, authBasic, formatUrl } from './utils'
 
 describe('http/encodeBasicCredentials', () => {
     it('encode basic credentials', () => {
@@ -10,7 +10,7 @@ describe('http/encodeBasicCredentials', () => {
     })
 
     it('create auth header', () => {
-        let actual = authBasic({ username: 'username', password: 'password'})
+        let actual = authBasic({ username: 'username', password: 'password' })
 
         let expected = { Authorization: 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=' }
 
@@ -101,7 +101,7 @@ describe('http/formatUrl', () => {
                 c: false,
                 d: undefined,
                 e: null,
-            }
+            },
         })
 
         let expected = 'http://example.com/?a=1&b=two&c=false'

@@ -1,5 +1,5 @@
 import { pipe } from 'rxjs'
-import { jsonResponse, returnOnce }  from '@etlx/operators/@internal/testing/fetch'
+import { jsonResponse, returnOnce } from '@etlx/operators/@internal/testing/fetch'
 import { ConfluencePaginatedResponse, ConfluencePage } from '../../types'
 
 export const dataPage = <T>(...results: T[]): ConfluencePaginatedResponse<T> => ({

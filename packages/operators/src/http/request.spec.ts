@@ -1,6 +1,6 @@
-import { fromJsonRequest, fromRequest, UrlParams, FromRequestOptions } from "./request"
-import { mockFetch, returnOnce } from "../@internal/testing/fetch"
-import { pipe } from "rxjs"
+import { pipe } from 'rxjs'
+import { fromJsonRequest, fromRequest, UrlParams } from './request'
+import { mockFetch, returnOnce } from '../@internal/testing/fetch'
 
 type JsonResponse = { body: any, contentType?: string, status?: number }
 const jsonResponse = (res: JsonResponse) => new Response(JSON.stringify(res.body), {
@@ -49,7 +49,7 @@ describe('fromJsonRequest', () => {
     it('parse json response', async () => {
         let body = {
             a: 42,
-            b: { c: 'test' }
+            b: { c: 'test' },
         }
 
         mockFetch(respondJsonOnce({ body }))

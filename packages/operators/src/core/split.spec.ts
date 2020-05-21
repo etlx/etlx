@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Observable, of, range } from 'rxjs'
 import { map, toArray, mapTo, delay } from 'rxjs/operators'
 import { split } from './split'
@@ -37,7 +38,7 @@ describe('split', () => {
 
 describe('split typings', () => {
     it('support no operators', async () => {
-        const observable = of(0).pipe(
+        let observable = of(0).pipe(
             split(),
         )
 
@@ -48,7 +49,7 @@ describe('split typings', () => {
     })
 
     it('support type inference up to 9 operators', async () => {
-        const observable = of<0>().pipe(
+        let observable = of<0>().pipe(
             split(
                 map<0, 1>(() => 1),
                 map<1, 2>(() => 2),
@@ -69,7 +70,7 @@ describe('split typings', () => {
     })
 
     it('support spread operator', async () => {
-        const observable = of<0>().pipe(
+        let observable = of<0>().pipe(
             split<0, 2>(...[
                 map<0, 1>(() => 1),
                 map<1, 2>(() => 2),

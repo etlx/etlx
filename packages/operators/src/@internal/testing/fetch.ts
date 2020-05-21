@@ -1,8 +1,12 @@
-jest.mock('node-fetch')
-import fetch from 'node-fetch'
+/* eslint-disable no-param-reassign */
 
-;((global: any) => {
-    const { Response, Headers } = jest.requireActual('node-fetch')
+jest.mock('node-fetch')
+
+// eslint-disable-next-line import/first, import/no-extraneous-dependencies
+import fetch from 'node-fetch';
+
+((global: any) => {
+    let { Response, Headers } = jest.requireActual('node-fetch')
 
     global.Response = Response
     global.Headers = Headers

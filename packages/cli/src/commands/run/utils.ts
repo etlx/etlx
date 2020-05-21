@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { merge, concat } from '../../utils/observable'
 import { notNullOrUndefined } from '../../utils'
 import { InternalOperator, EtlxOperator } from '../../observe'

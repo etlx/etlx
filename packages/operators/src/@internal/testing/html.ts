@@ -4,7 +4,7 @@ export function wrapHtml(html: string) {
 
 export function inline(str: string) {
     return str
-    .replace(/\n/g, ' ')
-    .replace(/\t/g, ' ')
-    .replace(/\s{2,}/g, '')
+        .replace(/\n/g, ' ')
+        .replace(/\t/g, ' ')
+        .replace(/\s{2,}/g, '')
 }

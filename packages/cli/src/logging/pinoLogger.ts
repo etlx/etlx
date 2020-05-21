@@ -17,22 +17,22 @@ export const pinoLogger = (opts: LoggingOptions): LoggerInternal => {
     return fromPino(pino(options))
 }
 
-function fromPino(pino: pino.Logger): LoggerInternal {
+function fromPino(logger: pino.Logger): LoggerInternal {
     return (msg, level, name) => {
-        let logger = pino.child({ name })
+        let child = logger.child({ name })
 
         switch (level) {
             case 'debug':
-                logger.debug(msg)
+                child.debug(msg)
                 break
             case 'warn':
-                logger.warn(msg)
+                child.warn(msg)
                 break
             case 'error':
-                logger.error(msg)
+                child.error(msg)
                 break
             default:
-                logger.info(msg)
+                child.info(msg)
                 break
         }
     }

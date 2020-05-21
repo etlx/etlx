@@ -15,9 +15,9 @@ type EventTypeLookup = { [event: string]: EventType }
 const toEventTypeLookup = (next: string[], error: string[], complete: string[]): EventTypeLookup => {
     let lookup: EventTypeLookup = {}
 
-    next.forEach(x => lookup[x] = { ...lookup[x], next: true })
-    error.forEach(x => lookup[x] = { ...lookup[x], error: true })
-    complete.forEach(x => lookup[x] = { ...lookup[x], complete: true })
+    next.forEach((x) => { lookup[x] = { ...lookup[x], next: true } })
+    error.forEach((x) => { lookup[x] = { ...lookup[x], error: true } })
+    complete.forEach((x) => { lookup[x] = { ...lookup[x], complete: true } })
 
     return lookup
 }
@@ -40,7 +40,7 @@ export type FromEventEmitterOptions<T = Event> = {
     nextSelector?: (event: string, args: any[]) => T,
 }
 
-export const fromEventEmitter = <T = Event>(emitter: EventEmitter, options?: FromEventEmitterOptions<T>) => {
+export function fromEventEmitter<T = Event>(emitter: EventEmitter, options?: FromEventEmitterOptions<T>) {
     let opts = options || {}
     let selector = opts.nextSelector || defaultNextSelector
 

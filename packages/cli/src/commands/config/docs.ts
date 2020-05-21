@@ -17,9 +17,7 @@ export function getDocs(config: convict.Config<any>): DocProp[] {
 
     function handleObjectSchema(node: { properties: convict.Schema<any> }, name?: string, parent?: DocObject): DocProp[] {
         let currentParent = name === undefined ? undefined : { name, parent }
-        let arrays = Object.entries(node.properties).map(([name, value]) => {
-            return handlePropertySchema(value, name, currentParent)
-        })
+        let arrays = Object.entries(node.properties).map(([key, value]) => handlePropertySchema(value, key, currentParent))
 
         return flatten(arrays)
     }
@@ -56,29 +54,29 @@ export function formatDocs(docs: DocProp[]) {
     let lines = docs
         .filter(x => x.name)
         .reduce(
-        (acc, doc) => {
-            let arg = doc.arg ? `--${doc.arg}` : undefined
-            let alt = [doc.env, arg].filter(Boolean).map(x => `\`${x}\``).join(', ')
-            alt = alt ? ` (${alt})` : ''
-            let title = `### ${formatBreadcrumbs(doc)}${alt}${br}`
-            let desc = doc.doc ? `${doc.doc}${br}` : undefined
-            let format = `* format: ${doc.format || '*'}`
-            let required = `* required: ${doc.default === 'null'}`
-            let defaultValue = doc.default === 'null' || doc.default === undefined ? undefined : `* default: ${doc.default}`
+            (acc, doc) => {
+                let arg = doc.arg ? `--${doc.arg}` : undefined
+                let alt = [doc.env, arg].filter(Boolean).map(x => `\`${x}\``).join(', ')
+                alt = alt ? ` (${alt})` : ''
+                let title = `### ${formatBreadcrumbs(doc)}${alt}${br}`
+                let desc = doc.doc ? `${doc.doc}${br}` : undefined
+                let format = `* format: ${doc.format || '*'}`
+                let required = `* required: ${doc.default === 'null'}`
+                let defaultValue = doc.default === 'null' || doc.default === undefined ? undefined : `* default: ${doc.default}`
 
-            const result = [
-                title,
-                desc,
-                format,
-                required,
-                defaultValue,
-                br,
-            ]
+                let result = [
+                    title,
+                    desc,
+                    format,
+                    required,
+                    defaultValue,
+                    br,
+                ]
 
-            return [...acc, ...result.filter(notNullOrUndefined)]
-        },
-        [],
-    )
+                return [...acc, ...result.filter(notNullOrUndefined)]
+            },
+            [],
+        )
 
     return lines.join('\n')
 }

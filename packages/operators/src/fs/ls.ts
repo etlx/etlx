@@ -38,9 +38,12 @@ export function ls(basePath: string, options?: LsOptions) {
     }
 
     return lstat(basePath).pipe(
-        mergeMap(stats => stats.isFile()
-            ? of(toLsItem(basePath)(stats))
-            : opts.recursive ? scanDirRecursive(basePath) : scanDir(basePath),
-        ),
+        mergeMap((stats) => {
+            if (stats.isFile()) {
+                return of(toLsItem(basePath)(stats))
+            } else {
+                return opts.recursive ? scanDirRecursive(basePath) : scanDir(basePath)
+            }
+        }),
     )
 }

@@ -32,11 +32,9 @@ export type FromJsonRequestOptions = FromRequestOptions & {
 }
 export function fromJsonRequest<T = any>(request: FromJsonRequestOptions) {
     return fromRequest(request).pipe(
-        mergeMap(response =>
-            response.ok
+        mergeMap(response => response.ok
             ? parseJson<T>(request, response)
-            : throwError(faultyResponse(response)),
-        ),
+            : throwError(faultyResponse(response))),
     )
 }
 

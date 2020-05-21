@@ -1,7 +1,7 @@
 import fs from 'fs'
-import { lstat, rmdir, unlink } from './bindings'
-import { mergeMap, mapTo, catchError } from 'rxjs/operators'
 import { Observable, of } from 'rxjs'
+import { mergeMap, mapTo, catchError } from 'rxjs/operators'
+import { lstat, rmdir, unlink } from './bindings'
 import { choose } from '../core'
 
 

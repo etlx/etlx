@@ -1,6 +1,6 @@
-import { condition } from './condition'
 import { range } from 'rxjs'
 import { map, toArray, mapTo } from 'rxjs/operators'
+import { condition } from './condition'
 
 const even = (x: number) => x % 2 === 0
 const double = (x: number) => x * 2
@@ -14,7 +14,7 @@ describe('condition', () => {
         let actual = await $.pipe(toArray()).toPromise()
 
         let expected = [
-            true, true, true,    // even
+            true, true, true, // even
             false, false, false, // odd
         ]
 
@@ -35,6 +35,4 @@ describe('condition', () => {
 
         expect(actual).toEqual(expected)
     })
-
-
 })

@@ -1,4 +1,4 @@
-import { merge as rxMerge, concat as rxConcat, Observable as rxObservable } from 'rxjs'
+import { merge as rxMerge, concat as rxConcat, Observable as RxObservable } from 'rxjs'
 
 type Subscription = {
     unsubscribe(): void;
@@ -28,6 +28,6 @@ export function concat<T>(...xs: Observable<T>[]): Observable<T> {
 }
 
 
-function toObservable<T>($: Observable<T>): rxObservable<T> {
-    return new rxObservable(x => $.subscribe(x))
+function toObservable<T>($: Observable<T>): RxObservable<T> {
+    return new RxObservable(x => $.subscribe(x))
 }

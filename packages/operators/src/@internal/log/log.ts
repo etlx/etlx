@@ -7,14 +7,14 @@ import { createLogger } from './createLogger'
 
 export function log<T>(
     config: LoggerConfig,
-    log: string | ((l: Logger, x: T) => void),
+    msg: string | ((l: Logger, x: T) => void),
     name?: string,
 ): OperatorFunction<T, T> {
     let logger = createLogger(config, name)
 
-    let sideffect = typeof log === 'function'
-        ? (x: T) => log(logger, x)
-        : () => logger.info(log)
+    let sideffect = typeof msg === 'function'
+        ? (x: T) => msg(logger, x)
+        : () => logger.info(msg)
 
     return ($: Observable<T>) => $.pipe(tap(sideffect))
 }

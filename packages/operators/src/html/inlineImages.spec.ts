@@ -1,7 +1,7 @@
+import { JSDOM } from 'jsdom'
 import { mockFetch, returnOnce, faultyResponse } from '../@internal/testing/fetch'
 import { inlineImages } from './inlineImages'
 import { promisifyLast } from '../@internal/utils'
-import { JSDOM } from 'jsdom'
 import { invalidMediaType } from '../http'
 
 const host = 'http://example.com'
@@ -11,8 +11,9 @@ const sut = promisifyLast(inlineImages)
 const body = (dom: JSDOM) => dom.window.document.body.innerHTML
 const respondWithImage = (contentType: string) => Promise.resolve(
     new Response('img-bytes', {
-        headers: { 'content-type': contentType }
-    }))
+        headers: { 'content-type': contentType },
+    }),
+)
 
 describe('inlineImages', () => {
     it('inline single image', async () => {
@@ -27,7 +28,7 @@ describe('inlineImages', () => {
     })
 
     it('inline multiple images', async () => {
-        mockFetch(x => {
+        mockFetch((x) => {
             returnOnce(respondWithImage(png))(x)
             returnOnce(respondWithImage(png))(x)
 
@@ -37,8 +38,8 @@ describe('inlineImages', () => {
         let init = '<img src="img.png"><img src="img2.png">'
 
         let actual = await sut(init, { host }).then(body)
-        let expected = '<img src="data:image/png;base64, aW1nLWJ5dGVz">' +
-                       '<img src="data:image/png;base64, aW1nLWJ5dGVz">'
+        let expected = '<img src="data:image/png;base64, aW1nLWJ5dGVz">'
+                     + '<img src="data:image/png;base64, aW1nLWJ5dGVz">'
 
         expect(actual).toEqual(expected)
     })

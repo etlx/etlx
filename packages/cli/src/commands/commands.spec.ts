@@ -1,6 +1,7 @@
 import { WriteStream } from 'tty'
 import commander from 'commander'
-import { etlx, EtlxOptions } from '../builder'
+import { etlx } from '../builder'
+import { EtlxCliCommandContext } from './types'
 import { commands } from '.'
 
 const args = (...xs: string[]) => ['node', 'scriptpath', ...xs]
@@ -10,14 +11,12 @@ describe('command', () => {
         let cmd0 = () => new commander.Command()
         let cmd1 = () => new commander.Command()
 
-        let init: EtlxOptions = { commands: [cmd0], configurations: [], observables: [] }
+        let init: EtlxCliCommandContext = { commands: [cmd0] }
 
         let actual = commands(cmd1)(init)
 
-        let expected: EtlxOptions = {
+        let expected: EtlxCliCommandContext = {
             commands: [cmd0, cmd1],
-            configurations: [],
-            observables: [],
         }
 
         expect(actual).toEqual(expected)
@@ -28,14 +27,12 @@ describe('command', () => {
         let cmd1 = () => new commander.Command()
         let cmd2 = () => new commander.Command()
 
-        let init: EtlxOptions = { commands: [cmd0], configurations: [], observables: [] }
+        let init: EtlxCliCommandContext = { commands: [cmd0] }
 
         let actual = commands(cmd1, cmd2)(init)
 
-        let expected: EtlxOptions = {
+        let expected: EtlxCliCommandContext = {
             commands: [cmd0, cmd1, cmd2],
-            configurations: [],
-            observables: [],
         }
 
         expect(actual).toEqual(expected)
@@ -49,7 +46,7 @@ describe('command', () => {
 
     it('show help when no command specified', () => {
         let actual = ''
-        let restore = mockStd(process.stdout, x => actual = x)
+        let restore = mockStd(process.stdout, (x) => { actual = x })
 
         etlx()(args())
 

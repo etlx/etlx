@@ -18,7 +18,7 @@ export const createLogger = (config: LoggerConfig, name?: string): Logger => {
         return emptyLogger
     }
 
-    let logger = config.logger
+    let { logger } = config
 
     let info = logFunction(logger, 'info', name)
     let warn = logFunction(logger, 'warn', name)

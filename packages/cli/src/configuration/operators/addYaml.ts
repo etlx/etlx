@@ -1,5 +1,5 @@
-import { addParser } from './addParser'
 import yaml from 'yaml'
+import { addParser } from './addParser'
 
 const parse = (x: string) => yaml.parse(x)
 const extension = ['yaml', 'yml']
