@@ -22,7 +22,7 @@ const toStat = path => lstat(path).then(stat => ({ path, dir: stat.isDirectory()
 const removeEmptyDirectories = async (dir) => {
   let paths = (await readdir(dir)).map(x => join(dir, x))
   if (paths.length === 0) {
-    rmdir(dir)
+    await rmdir(dir)
     return true
   }
 
@@ -32,7 +32,7 @@ const removeEmptyDirectories = async (dir) => {
   let isEmpty = results.every(Boolean) && results.length === stats.length
 
   if (isEmpty) {
-    rmdir(dir)
+    await rmdir(dir)
     return true
   } else {
     return false
