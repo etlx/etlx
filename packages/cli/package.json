@@ -6,6 +6,10 @@
   "license": "MIT",
   "main": "lib/index",
   "typings": "lib/index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/etlx/etlx"
+  },
   "scripts": {
     "build": "tsc",
     "pack": "tsc --outDir .",
