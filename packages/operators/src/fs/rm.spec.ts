@@ -9,7 +9,7 @@ const expectNotExists = (path: string) => expect(fs.existsSync(path)).toBeFalsy(
 
 describe('rm', () => {
   it('remove directory', async () => {
-    let path = testdir('remove-dir')
+    let path = testdir('rm')
     await fs.promises.mkdir(path)
 
     let actual = await rm(path).pipe(toArray()).toPromise()
@@ -20,7 +20,7 @@ describe('rm', () => {
   })
 
   it('remove directory recursively', async () => {
-    let path = testdir('remove-dir-rec/dir')
+    let path = testdir('rm/dir')
     await fs.promises.mkdir(path, recursive)
 
     let actual = await rm(path, recursive).pipe(toArray()).toPromise()
