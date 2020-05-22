@@ -1,10 +1,10 @@
-import { OperatorFunction, of } from 'rxjs'
+import { Observable } from 'rxjs'
 import { concatMap } from 'rxjs/operators'
 import { Store } from './types'
 
-export const cache = <T>(data: OperatorFunction<void, T>, store: Store<T>) =>
+export const cache = <T>(data: Observable<T>, store: Store<T>) =>
   store.exists().pipe(
     concatMap(exists => exists
       ? store.read()
-      : of(undefined).pipe(data, store.write)),
+      : data.pipe(store.write)),
   )
