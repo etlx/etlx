@@ -11,9 +11,9 @@
     "clean": "shx rm -rf ./packages/**/dist",
     "build": "npm run clean && lerna run build",
     "pack": "npm run clean && lerna run pack",
-    "prepublishOnly": "npm run pack | node scripts/track",
+    "prepublishOnly": "npm run pack | node scripts/track build.out",
     "publish": "lerna publish",
-    "postpublish": "cat build.out | node scripts/rm && node scripts/rmdir ./packages && rm build.out",
+    "postpublish": "node scripts/rm build.out && node scripts/rmdir ./packages",
     "test": "jest",
     "lint": "eslint packages --ext .js,.ts"
   },
