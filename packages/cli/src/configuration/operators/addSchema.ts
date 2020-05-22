@@ -1,6 +1,6 @@
 import { Schema, ConfigurationOptions } from '../types'
 
-export const addSchema = (schema: Schema) => (opts: ConfigurationOptions) => ({
+export const addSchema = (...schemes: Schema[]) => (opts: ConfigurationOptions) => ({
   ...opts,
-  schemes: [...opts.schemes, schema],
+  schemes: [...opts.schemes, ...schemes],
 })
