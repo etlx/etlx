@@ -39,7 +39,8 @@ function catchConfigurationError<T>(f: () => T): T {
     return f()
   } catch (e) {
     if (e instanceof ConfigurationError) {
-      process.stderr.write(e.toString())
+      // eslint-disable-next-line no-console
+      console.error(e.toString())
       process.exit(1)
     } else {
       throw e

@@ -21,7 +21,7 @@ export const configCommand = () => (cli: commander.Command, ctx: EtlxOptions) =>
         loadConfigIfExists(config, cmd.config || 'config.json')
         try {
           validateConfig(config)
-          process.stdout.write('Config is valid')
+          console.log('Config is valid')
         } catch (e) {
           console.error('Config is invalid:\n', e.message)
         }
