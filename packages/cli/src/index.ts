@@ -1,2 +1,6 @@
 export * from './builder'
 export * from './types'
+export { defaultConfiguration } from './configuration'
+export { observe } from './observe'
+export { defaultCommands } from './commands'
+export { addLogging } from './logging'
