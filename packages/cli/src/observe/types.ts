@@ -1,4 +1,4 @@
-import { Observable } from '../utils/observable'
+import { Observable } from '../@internal/utils/observable'
 
 export type EtlxOperator = (config: any) => Observable<any>
 

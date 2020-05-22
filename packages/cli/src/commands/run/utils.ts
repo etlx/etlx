@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { merge, concat } from '../../utils/observable'
-import { notNullOrUndefined } from '../../utils'
+import { merge, concat } from '../../@internal/utils/observable'
+import { notNullOrUndefined } from '../../@internal/utils'
 import { InternalOperator, EtlxOperator } from '../../observe'
 
 export const createPipeline = (

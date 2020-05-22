@@ -2,7 +2,7 @@ import { interval, of, Observable } from 'rxjs'
 import { mergeMap, take, toArray, map } from 'rxjs/operators'
 import { createPipeline } from './utils'
 import { EtlxOperator, InternalOperator } from '../../observe'
-import { Observable as EtlxObservable } from '../../utils/observable'
+import { Observable as EtlxObservable } from '../../@internal/utils/observable'
 
 describe('createPipeline', () => {
   let sourceA: EtlxOperator = () => of(undefined).pipe(

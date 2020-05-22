@@ -1,4 +1,4 @@
-import { isObservable } from '../utils/observable'
+import { isObservable } from '../@internal/utils/observable'
 import { EtlxOperatorVariant, EtlxOperator, EtlxOperatorContext, InternalOperator } from './types'
 
 const isOperator = (x: any): x is EtlxOperatorVariant =>

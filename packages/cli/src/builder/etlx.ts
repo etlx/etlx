@@ -1,5 +1,5 @@
 import commander from 'commander'
-import { Configure, pipeConfigure } from '../utils'
+import { Configure, pipeConfigure } from '../@internal/utils'
 
 import { ConfigurationError } from '../configuration'
 import { EtlxOptions } from '../types'

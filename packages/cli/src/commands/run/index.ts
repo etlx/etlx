@@ -2,7 +2,7 @@ import commander from 'commander'
 import { buildConfiguration } from '../../configuration/utils'
 import { InternalOperator } from '../../observe'
 import { EtlxOptions } from '../../types'
-import { notNullOrUndefined } from '../../utils'
+import { notNullOrUndefined } from '../../@internal/utils'
 import { isScriptsValid, createPipeline } from './utils'
 
 

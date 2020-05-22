@@ -1,7 +1,7 @@
 import fs from 'fs'
 import convict, { Config } from 'convict'
 import { ConfigurationOptions, REQUIRED, ConfigurationError } from './types'
-import { flatten, pipeConfigure, Configure } from '../utils'
+import { flatten, pipeConfigure, Configure } from '../@internal/utils'
 
 export function loadConfigIfExists(config: Config<any>, filepath: string) {
   if (fs.existsSync(filepath)) {

@@ -1,5 +1,5 @@
 import { SchemaObj } from 'convict'
-import { Configure } from '../utils'
+import { Configure } from '../@internal/utils'
 
 export const REQUIRED: any = null
 
