@@ -15,7 +15,7 @@ const createLogger = (config: LoggingConfig) => {
 
 export const addLogging = (opts?: LoggingOptions) => configure(
   ctx => ({
-    objects: ctx.objects.concat({ logging: opts }),
+    objects: ctx.objects.concat({ logging: opts || {} }),
     schemes: ctx.schemes.concat(loggingConfigSchema),
     overrides: ctx.overrides.concat(createLogger),
   }),
