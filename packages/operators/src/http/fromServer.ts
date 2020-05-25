@@ -1,9 +1,9 @@
-import net from 'net'
+import net, { Socket } from 'net'
 import { fromEventEmitter } from '../utils/fromEventEmitter'
 
 export type ServerEvent =
-    | { type: 'connection' }
-    | { type: 'listening' }
+    | { event: 'connection', args: [Socket] }
+    | { event: 'listening' }
 
 export const fromServer = (server: net.Server) => fromEventEmitter<ServerEvent>(server, {
   complete: ['close'],
