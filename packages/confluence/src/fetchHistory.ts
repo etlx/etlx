@@ -1,5 +1,5 @@
 import { pipe, OperatorFunction, of } from 'rxjs'
-import { mergeMap, filter, distinct, tap } from 'rxjs/operators'
+import { mergeMap, filter, distinct } from 'rxjs/operators'
 import { expandWhile } from '@etlx/operators/core'
 import { log } from '@etlx/operators/@internal/log'
 import { ConfluenceConfig, ConfluencePageVersion, ConfluencePageExpandable, ConfluencePage } from './types'
