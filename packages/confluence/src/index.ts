@@ -3,6 +3,8 @@ export * from './getSpaceContent'
 export * from './getPageAttachments'
 export * from './normalizeBody'
 export * from './excerptBody'
+export * from './getPageById'
+export * from './fetchHistory'
 
 export const configSchema = {
   confluence: {

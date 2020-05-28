@@ -22,7 +22,7 @@ export const returnOnce = <TOut>(x: TOut) => (mock: jest.Mock<TOut>) => mock.moc
 export type MockFetch = jest.Mock<Promise<Response>, [RequestInfo, RequestInit | undefined]>
 export function mockFetch(f?: (x: MockFetch) => MockFetch): MockFetch {
   let mock: MockFetch = fetch as any
-  mock.mockClear()
+  mock.mockReset()
 
   return f === undefined ? mock : f(mock)
 }
