@@ -2,14 +2,14 @@ import url from 'url'
 import { promisify } from '@etlx/operators/@internal/utils'
 import { mockFetch, jsonResponse } from '@etlx/operators/@internal/testing/fetch'
 import { getSpaceContent } from './getSpaceContent'
-import { respondWith, page, dataPage, confluence } from './@internal/testing'
+import { respondManyWith, page, dataPage, confluence } from './@internal/testing'
 
 
 const sut = promisify(getSpaceContent)
 
 describe('getSpaceContent', () => {
   it('can get single page', async () => {
-    mockFetch(respondWith(page()))
+    mockFetch(respondManyWith(page()))
 
     let expected = [page()]
 
@@ -35,7 +35,7 @@ describe('getSpaceContent', () => {
   })
 
   it('can make correct Confluence request', async () => {
-    let { mock } = mockFetch(respondWith(page()))
+    let { mock } = mockFetch(respondManyWith(page()))
 
     await sut('space', { confluence })
 

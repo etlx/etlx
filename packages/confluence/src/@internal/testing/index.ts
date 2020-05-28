@@ -23,5 +23,6 @@ export const page = (rest?: Partial<ConfluencePage>): ConfluencePage => ({
   ...rest,
 })
 
-export const respondWith = pipe(dataPage, jsonResponse, returnOnce)
+export const respondWith = pipe(jsonResponse, returnOnce)
+export const respondManyWith = pipe(dataPage, respondWith)
 export const confluence = { host: 'http://localhost', username: '', password: '' }

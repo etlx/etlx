@@ -1,7 +1,7 @@
 import url from 'url'
 import { promisify } from '@etlx/operators/@internal/utils'
 import { mockFetch, jsonResponse } from '@etlx/operators/@internal/testing/fetch'
-import { confluence, page, dataPage, respondWith } from './@internal/testing'
+import { confluence, page, dataPage, respondManyWith } from './@internal/testing'
 import { getPageAttachments } from './getPageAttachments'
 import { ConfluenceAttachment, ConfluencePage } from './types'
 
@@ -39,7 +39,7 @@ const pageWithAttachments = (rest: Partial<ConfluencePage>, ...attachments: Conf
 
 describe('getPageAttachments', () => {
   it('can get single page', async () => {
-    mockFetch(respondWith(attachment()))
+    mockFetch(respondManyWith(attachment()))
 
     let actual = await sut(page(), { confluence })
 
@@ -65,7 +65,7 @@ describe('getPageAttachments', () => {
   })
 
   it('can make correct Confluence request', async () => {
-    let { mock } = mockFetch(respondWith(attachment()))
+    let { mock } = mockFetch(respondManyWith(attachment()))
     let init = page()
 
     await sut(init, { confluence, limit: 1, mediaType: 'type', filename: 'filename' })
