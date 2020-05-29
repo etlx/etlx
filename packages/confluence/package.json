@@ -1,6 +1,6 @@
 {
   "name": "@etlx/confluence",
-  "version": "0.7.0",
+  "version": "0.6.0",
   "description": "Confluence operators for @etlx",
   "author": "n.m.batrakov",
   "license": "MIT",
