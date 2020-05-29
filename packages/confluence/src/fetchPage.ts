@@ -5,13 +5,13 @@ import { isNullOrUndefined } from '@etlx/operators/@internal/utils'
 import { log } from '@etlx/operators/@internal/log'
 import { ConfluenceConfig, ConfluencePage, ConfluencePageExpandable } from './types'
 
-export type GetPageByIdOptions = {
+export type FetchPageOptions = {
   expand?: ConfluencePageExpandable[],
   version?: number,
   status?: string,
 }
 
-export const getPageById = (pageId: string, config: ConfluenceConfig, opts?: GetPageByIdOptions) => {
+export const fetchPage = (pageId: string, config: ConfluenceConfig, opts?: FetchPageOptions) => {
   let { expand, version, status } = opts || {}
 
   let request: FromRequestOptions = {

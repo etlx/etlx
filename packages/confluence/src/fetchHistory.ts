@@ -3,7 +3,7 @@ import { mergeMap, filter, distinct } from 'rxjs/operators'
 import { expandWhile } from '@etlx/operators/core'
 import { log } from '@etlx/operators/@internal/log'
 import { ConfluenceConfig, ConfluencePageVersion, ConfluencePageExpandable } from './types'
-import { getPageById } from './getPageById'
+import { fetchPage } from './fetchPage'
 
 type Page = {
   id: string,
@@ -69,7 +69,7 @@ const loadNextVersion = (config: ConfluenceConfig, { backward }: FetchHistoryOpt
   let edge = (backward && nextVersion < limit) || (!backward && nextVersion > limit)
   let version = edge ? limit : nextVersion
 
-  return getPageById(pageId, config, { expand, version })
+  return fetchPage(pageId, config, { expand, version })
 }
 
 const toChanges = (backward: boolean) => (page: Page) => {
@@ -85,7 +85,7 @@ const loadVersionInfo = (config: ConfluenceConfig) => (page: Page) => {
   let pageId = page.id
   let version = page.version?.number
 
-  return expanded ? of(page) : getPageById(pageId, config, { expand, version }).pipe(
+  return expanded ? of(page) : fetchPage(pageId, config, { expand, version }).pipe(
     log(config, 'Additional expand fields required. Reloading page...', 'confluence'),
   )
 }
