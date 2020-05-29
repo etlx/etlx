@@ -1,11 +1,12 @@
-import { promisifyLast } from '@etlx/operators/@internal/utils'
+import { of } from 'rxjs'
 import { mockFetch } from '@etlx/operators/@internal/testing/fetch'
-import { normalizeBody } from './normalizeBody'
+import { normalizeBody, NormalizeBodyOptions } from './normalizeBody'
 import { page, confluence } from './@internal/testing'
-import { ConfluencePageBody } from './types'
+import { ConfluencePageBody, ConfluencePage } from './types'
 import { getPageBody } from './utils'
 
-const sut = promisifyLast(normalizeBody)
+const sut = (init: ConfluencePage, opts?: NormalizeBodyOptions) =>
+  of(init).pipe(normalizeBody({ confluence }, opts)).toPromise()
 
 const body = (value: string): { body: ConfluencePageBody } =>
   ({ body: { view: { value, representation: 'view' } } })
@@ -15,7 +16,7 @@ describe('normalizeBody', () => {
     let data = page(body(''))
 
     let expected = ''
-    let actual = getPageBody(await sut(data, { confluence }))
+    let actual = getPageBody(await sut(data))
 
     expect(actual).toEqual(expected)
   })
@@ -25,7 +26,7 @@ describe('normalizeBody', () => {
     let data = page(body(html))
 
     let expected = '<p>Text</p>'
-    let actual = getPageBody(await sut(data, { confluence }))
+    let actual = getPageBody(await sut(data))
 
     expect(actual).toEqual(expected)
   })
@@ -35,7 +36,7 @@ describe('normalizeBody', () => {
     let data = page(body(html))
 
     let expected = html
-    let actual = getPageBody(await sut(data, { confluence }))
+    let actual = getPageBody(await sut(data))
 
     expect(actual).toEqual(expected)
   })
@@ -45,7 +46,7 @@ describe('normalizeBody', () => {
     let data = page(body(html))
 
     let expected = '<p>Text</p>'
-    let actual = getPageBody(await sut(data, { confluence }))
+    let actual = getPageBody(await sut(data))
 
     expect(actual).toEqual(expected)
   })
@@ -55,7 +56,7 @@ describe('normalizeBody', () => {
     let data = page(body(html))
 
     let expected = '<a href="http://example.com/">One</a>'
-    let actual = getPageBody(await sut(data, { confluence }))
+    let actual = getPageBody(await sut(data))
 
     expect(actual).toEqual(expected)
   })
@@ -65,7 +66,7 @@ describe('normalizeBody', () => {
     let data = page(body(html))
 
     let expected = '<img src="http://example.com/">'
-    let actual = getPageBody(await sut(data, { confluence }))
+    let actual = getPageBody(await sut(data))
 
     expect(actual).toEqual(expected)
   })
@@ -75,7 +76,7 @@ describe('normalizeBody', () => {
     let data = page(body(html))
 
     let expected = '<a src="http://localhost/page/1/">Text</a>'
-    let actual = getPageBody(await sut(data, { confluence }))
+    let actual = getPageBody(await sut(data))
 
     expect(actual).toEqual(expected)
   })
@@ -92,7 +93,7 @@ describe('normalizeBody', () => {
     let data = page(body(html))
 
     let expected = '<div><p>One</p><div><p>Two</p></div></div>'
-    let actual = getPageBody(await sut(data, { confluence }))
+    let actual = getPageBody(await sut(data))
 
     expect(actual).toEqual(expected)
   })
@@ -106,7 +107,7 @@ describe('normalizeBody', () => {
     let data = page(body(html))
 
     let expected = '<img src="data:image/png;base64, aW1nLWJ5dGVz">'
-    let actual = getPageBody(await sut(data, { confluence, inlineImages: true }))
+    let actual = getPageBody(await sut(data, { inlineImages: true }))
 
     expect(actual).toEqual(expected)
   })

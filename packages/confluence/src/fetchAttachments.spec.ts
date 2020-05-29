@@ -1,11 +1,12 @@
 import url from 'url'
-import { promisify } from '@etlx/operators/@internal/utils'
+import { toArray } from 'rxjs/operators'
 import { mockFetch, jsonResponse } from '@etlx/operators/@internal/testing/fetch'
-import { confluence, page, dataPage, respondWith } from './@internal/testing'
-import { getPageAttachments } from './getPageAttachments'
-import { ConfluenceAttachment, ConfluencePage } from './types'
+import { confluence, page, dataPage, respondManyWith } from './@internal/testing'
+import { fetchAttachments, FetchAttachmentsOptions } from './fetchAttachments'
+import { ConfluenceAttachment } from './types'
 
-let sut = promisify(getPageAttachments)
+let sut = (id: string, opts?: FetchAttachmentsOptions) =>
+  fetchAttachments(id, { confluence }, opts).pipe(toArray()).toPromise()
 
 const attachment = (rest?: Partial<ConfluenceAttachment>): ConfluenceAttachment => ({
   id: 'test',
@@ -27,28 +28,18 @@ const attachment = (rest?: Partial<ConfluenceAttachment>): ConfluenceAttachment 
   ...rest,
 })
 
-const pageWithAttachments = (rest: Partial<ConfluencePage>, ...attachments: ConfluenceAttachment[]) => page({
-  ...rest,
-  descendants: {
-    attachment: {
-      ...dataPage(...attachments),
-      limit: 1,
-    },
-  },
-})
+describe('fetchAttachments', () => {
+  it('single page', async () => {
+    mockFetch(respondManyWith(attachment()))
 
-describe('getPageAttachments', () => {
-  it('can get single page', async () => {
-    mockFetch(respondWith(attachment()))
+    let actual = await sut('0')
 
-    let actual = await sut(page(), { confluence })
-
-    let expected = [pageWithAttachments(page(), attachment())]
+    let expected = [attachment()]
 
     expect(actual).toEqual(expected)
   })
 
-  it('can paginate', async () => {
+  it('paginate', async () => {
     mockFetch((mock) => {
       let data = dataPage(attachment())
       let r1 = jsonResponse({ ...data, size: 2 })
@@ -57,18 +48,18 @@ describe('getPageAttachments', () => {
       return mock.mockReturnValueOnce(r1).mockReturnValueOnce(r2)
     })
 
-    let actual = await sut(page(), { confluence })
+    let actual = await sut('0')
 
-    let expected = [pageWithAttachments(page(), attachment(), attachment())]
+    let expected = [attachment(), attachment()]
 
     expect(actual).toEqual(expected)
   })
 
-  it('can make correct Confluence request', async () => {
-    let { mock } = mockFetch(respondWith(attachment()))
+  it('make correct Confluence request', async () => {
+    let { mock } = mockFetch(respondManyWith(attachment()))
     let init = page()
 
-    await sut(init, { confluence, limit: 1, mediaType: 'type', filename: 'filename' })
+    await sut(init.id, { limit: 1, mediaType: 'type', filename: 'filename' })
 
     expect(mock.calls).toHaveLength(1)
 

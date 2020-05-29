@@ -1,27 +1,15 @@
 import { pipe } from 'rxjs'
 import { jsonResponse, returnOnce } from '@etlx/operators/@internal/testing/fetch'
-import { ConfluencePaginatedResponse, ConfluencePage } from '../../types'
+import { dataPage } from './data'
 
-export const dataPage = <T>(...results: T[]): ConfluencePaginatedResponse<T> => ({
-  results,
-  start: 0,
-  limit: results.length,
-  size: 0,
-})
+export * from './data'
 
-export const page = (rest?: Partial<ConfluencePage>): ConfluencePage => ({
-  id: '0',
-  title: 'test',
-  status: 'current',
-  type: 'page',
-  _links: {
-    self: '',
-    tinyui: '',
-    webui: '',
-  },
-  extensions: undefined,
-  ...rest,
-})
-
-export const respondWith = pipe(dataPage, jsonResponse, returnOnce)
 export const confluence = { host: 'http://localhost', username: '', password: '' }
+
+export const respondWith = pipe(jsonResponse, returnOnce)
+export const respondManyWith = pipe(dataPage, respondWith)
+
+export const mockSequence = <T>(...xs: T[]) => (init: jest.Mock<T>) =>
+  xs.reduce((prev, next) => prev.mockReturnValueOnce(next), init)
+
+export const respondSeq = (...xs: any[]) => mockSequence(...xs.map(jsonResponse))

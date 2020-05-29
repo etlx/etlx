@@ -1,8 +1,10 @@
 export * from './types'
-export * from './getSpaceContent'
-export * from './getPageAttachments'
+export * from './fetchContent'
+export * from './fetchAttachments'
 export * from './normalizeBody'
 export * from './excerptBody'
+export * from './fetchPage'
+export * from './fetchHistory'
 
 export const configSchema = {
   confluence: {

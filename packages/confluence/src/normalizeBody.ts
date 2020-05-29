@@ -1,16 +1,11 @@
-import { Observable, of, OperatorFunction } from 'rxjs'
-import { mergeMap, map } from 'rxjs/operators'
-import { choose } from '@etlx/operators/core'
+import { Observable, OperatorFunction, pipe } from 'rxjs'
+import { map } from 'rxjs/operators'
+import { choose, split } from '@etlx/operators/core'
 import { minify, stringifyBody, forEachAttribute, inlineImages } from '@etlx/operators/html'
-import { LoggerConfig, log } from '@etlx/operators/@internal/log'
+import { log } from '@etlx/operators/@internal/log'
 import { formatUrl } from '@etlx/operators/http'
-import { ConfluencePageBody } from './types'
+import { ConfluencePageBody, ConfluenceConfig } from './types'
 import { getPageBody, updateBody } from './utils'
-
-export type NormalizeBodyOptions = LoggerConfig & {
-  confluence: { host: string },
-  inlineImages?: boolean,
-}
 
 type Page = { body?: ConfluencePageBody }
 
@@ -28,20 +23,29 @@ const cleanAttributes = (host: string) => ($: Observable<string>) => $.pipe(
   }),
 )
 
-const cleanHtml = (opts: NormalizeBodyOptions) => ($: Observable<string>) => $.pipe(
-  cleanAttributes(opts.confluence.host),
-  choose(opts.inlineImages, inlineImages(opts.confluence)),
+const cleanHtml = (config: ConfluenceConfig, opts: NormalizeBodyOptions) => ($: Observable<string>) => $.pipe(
+  cleanAttributes(config.confluence.host),
+  choose(opts.inlineImages, inlineImages(config.confluence)),
   minify(),
 )
 
-export function normalizeBody<T extends Page>(opts: NormalizeBodyOptions): OperatorFunction<T, T> {
-  return $ => $.pipe(
-    log(opts, 'Normalizing page body', 'confluence'),
-    mergeMap(page => of(getPageBody(page)).pipe(
-      cleanHtml(opts),
+
+export type NormalizeBodyOptions = {
+  inlineImages?: boolean,
+}
+
+export function normalizeBody<T extends Page>(
+  config: ConfluenceConfig,
+  opts?: NormalizeBodyOptions,
+): OperatorFunction<T, T> {
+  return pipe(
+    log<T>(config, 'Normalizing page body', 'confluence'),
+    split(
+      map(getPageBody),
+      cleanHtml(config, opts || {}),
       stringifyBody(),
-      map(updateBody(page)),
-    )),
-    log(opts, 'Page body normalized', 'confluence'),
+    ),
+    map(([page, body]) => updateBody(page)(body)),
+    log<T>(config, 'Page body normalized', 'confluence'),
   )
 }

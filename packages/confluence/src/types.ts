@@ -72,16 +72,13 @@ export type ConfluenceLabel = {
 }
 
 export type ConfluencePageHistory = {
-  lastUpdated: {
-    by: ConfluenceUser,
-    when: string,
-    message: string,
-    number: number,
-    minorEdit: boolean,
-  },
+  lastUpdated?: ConfluencePageVersion,
+  nextVersion?: ConfluencePageVersion,
+  previousVersion?: ConfluencePageVersion,
   latest: boolean,
   createdBy: ConfluenceUser,
   createdDate: string,
+  hidden: boolean,
 }
 
 export type ConfluencePageVersion = {
@@ -139,6 +136,8 @@ export type ConfluencePageExpandable =
     | 'children.page'
     | 'history'
     | 'history.lastUpdated'
+    | 'history.previousVersion'
+    | 'history.nextVersion'
     | 'ancestors'
     | 'ancestors.metadata'
     | 'ancestors.history'

@@ -6,21 +6,24 @@ import { getTextContent } from '@etlx/operators/html/getTextContent'
 import { ConfluencePageBody } from './types'
 import { getPageBody } from './utils'
 
-export type ExcerptBodyOptions = LoggerConfig & {
+type Page = { body?: ConfluencePageBody }
+
+export type ExcerptBodyOptions = {
   maxLength?: number,
 }
 
-type Page = { body?: ConfluencePageBody }
-
-export function excerptBody<T extends Page>(options?: ExcerptBodyOptions): OperatorFunction<T, T & { excerpt: string }> {
-  let opts = options || {}
+export function excerptBody<T extends Page>(
+  config?: LoggerConfig,
+  options?: ExcerptBodyOptions,
+): OperatorFunction<T, T & { excerpt: string }> {
+  let cfg = config || {}
 
   return $ => $.pipe(
-    log(opts, 'Making page body excerpt', 'confluence'),
+    log(cfg, 'Making page body excerpt', 'confluence'),
     mergeMap(page => of(getPageBody(page)).pipe(
       getTextContent(options),
       map(excerpt => ({ ...page, excerpt })),
     )),
-    log(opts, 'Page body excerpt added', 'confluence'),
+    log(cfg, 'Page body excerpt added', 'confluence'),
   )
 }
