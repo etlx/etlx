@@ -81,8 +81,52 @@ describe('fetchHistory', () => {
 
     expect(actual).toEqual(expected)
   })
+
+  it('forward; includePeriodInitVersion', async () => {
+    let max = 6
+    let from = addDays(testDate(2), -42)
+    let to = addDays(testDate(3), 42)
+    mockFetch(getPageApi(max))
+
+    let results = await sut(pageVersion(1, max), {
+      from,
+      to,
+      includePeriodInitVersion: true,
+      backward: false,
+    })
+
+    let actual = results.map(x => x.number)
+    let expected = range(3, 1)
+
+    expect(actual).toEqual(expected)
+  })
+
+  it('backward; includePeriodInitVersion', async () => {
+    let max = 6
+    let from = addDays(testDate(2), -42)
+    let to = addDays(testDate(3), 42)
+    mockFetch(getPageApi(max))
+
+    let results = await sut(pageVersion(max, max), {
+      from,
+      to,
+      includePeriodInitVersion: true,
+      backward: true,
+    })
+
+    let actual = results.map(x => x.number)
+    let expected = range(3, 1).reverse()
+
+    expect(actual).toEqual(expected)
+  })
 })
 
+
+function addDays(date: Date, days: number): Date {
+  let d = new Date(date.valueOf())
+  d.setDate(date.getDate() + days)
+  return d
+}
 
 function range(count: number, start: number = 0) {
   return Array(count).fill(undefined).map((_, i) => i + start)

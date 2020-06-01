@@ -1,9 +1,10 @@
 import { pipe, OperatorFunction, of } from 'rxjs'
 import { mergeMap, filter, distinct } from 'rxjs/operators'
-import { expandWhile } from '@etlx/operators/core'
+import { expandWhile, choose } from '@etlx/operators/core'
 import { log } from '@etlx/operators/@internal/log'
 import { ConfluenceConfig, ConfluencePageVersion, ConfluencePageExpandable } from './types'
 import { fetchPage } from './fetchPage'
+import { filterPrev, filterNext } from './@internal/operators/filter'
 
 type Page = {
   id: string,
@@ -23,12 +24,18 @@ const parseDate = (x: string) => new Date(Date.parse(x))
 const gt = (a: Date | undefined, b: Date | undefined) => a && b ? a > b : false
 const lt = (a: Date | undefined, b: Date | undefined) => a && b ? a < b : false
 
-const withinPeriod = ({ from, to }: Period) => ({ when }: ConfluencePageVersion) => {
+const withinPeriod = (opts: FetchHistoryOptions) => (
+  { when }: ConfluencePageVersion,
+  prev: ConfluencePageVersion | undefined,
+): boolean => {
+  let { from, to, includePeriodInitVersion: withInit } = opts
   let date = parseDate(when)
+
   let start = !from || date >= from
   let end = !to || date <= to
+  let init = !!from && !!withInit && date < from && (!prev || parseDate(prev.when) >= from)
 
-  return start && end
+  return (start && end) || init
 }
 
 const checkPeriod = (page: Page, opts: FetchHistoryOptions) => {
@@ -90,7 +97,7 @@ const loadVersionInfo = (config: ConfluenceConfig) => (page: Page) => {
   )
 }
 
-export type FetchHistoryOptions = Period & { backward?: boolean }
+export type FetchHistoryOptions = Period & { backward?: boolean, includePeriodInitVersion?: boolean }
 
 export const REQUIRED_EXPAND_FIELDS: ConfluencePageExpandable[] = expand.slice()
 
@@ -109,7 +116,11 @@ export function fetchHistory<T extends Page>(
     ),
     mergeMap(toChanges(backward)),
     filter(notUndefined),
-    filter(withinPeriod(opts)),
+    choose(
+      opts.backward,
+      filterPrev(withinPeriod(opts)),
+      filterNext(withinPeriod(opts)),
+    ),
     distinct(x => x.number),
   )
 }
