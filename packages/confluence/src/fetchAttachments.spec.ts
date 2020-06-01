@@ -6,7 +6,7 @@ import { fetchAttachments, FetchAttachmentsOptions } from './fetchAttachments'
 import { ConfluenceAttachment } from './types'
 
 let sut = (id: string, opts?: FetchAttachmentsOptions) =>
-  fetchAttachments(id, { confluence }, opts).pipe(toArray()).toPromise()
+  fetchAttachments({ confluence }, id, opts).pipe(toArray()).toPromise()
 
 const attachment = (rest?: Partial<ConfluenceAttachment>): ConfluenceAttachment => ({
   id: 'test',

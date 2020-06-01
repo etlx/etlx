@@ -1,6 +1,5 @@
-import url from 'url'
 import { toArray } from 'rxjs/operators'
-import { mockFetch, jsonResponse } from '@etlx/operators/@internal/testing/fetch'
+import { mockFetch } from '@etlx/operators/@internal/testing/fetch'
 import { fetchContent, FetchContentOptions } from './fetchContent'
 import { respondManyWith, page, dataPage, confluence, respondSeq } from './@internal/testing'
 

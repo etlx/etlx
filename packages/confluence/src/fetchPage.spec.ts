@@ -6,7 +6,7 @@ describe('fetchPage', () => {
   it('return page unchanged', async () => {
     mockFetch(respondWith(page()))
 
-    let actual = await fetchPage('test', { confluence }).toPromise()
+    let actual = await fetchPage({ confluence }, 'test').toPromise()
     let expected = page()
 
     expect(actual).toEqual(expected)
@@ -17,7 +17,7 @@ describe('fetchPage', () => {
 
     let opts: FetchPageOptions = { version: 1, expand: ['body', 'children'], status: 'current' }
 
-    await fetchPage('test', { confluence }, opts).toPromise()
+    await fetchPage({ confluence }, 'test', opts).toPromise()
 
     let actual = fn.mock.calls[0][0]
     let expected = `${confluence.host}/rest/api/content/test?version=1&status=current&expand=${escape('body,children')}`

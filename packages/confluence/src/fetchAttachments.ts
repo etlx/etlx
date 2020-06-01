@@ -41,8 +41,8 @@ export type FetchAttachmentsOptions = {
 }
 
 export function fetchAttachments(
-  pageId: string,
   config: ConfluenceConfig,
+  pageId: string,
   opts?: FetchAttachmentsOptions,
 ): Observable<ConfluenceAttachment> {
   let loadPage = loadAttachmentsBatch(pageId, config, opts)

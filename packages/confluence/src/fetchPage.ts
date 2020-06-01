@@ -11,7 +11,7 @@ export type FetchPageOptions = {
   status?: string,
 }
 
-export const fetchPage = (pageId: string, config: ConfluenceConfig, opts?: FetchPageOptions) => {
+export const fetchPage = (config: ConfluenceConfig, pageId: string, opts?: FetchPageOptions) => {
   let { expand, version, status } = opts || {}
 
   let request: FromRequestOptions = {
