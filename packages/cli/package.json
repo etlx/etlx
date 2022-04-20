@@ -23,7 +23,7 @@
     "@types/pino": "^6.0.0",
     "abort-controller": "^3.0.0",
     "commander": "^4.0.0",
-    "convict": "^5.0.0",
+    "convict": "^6.2.2",
     "node-fetch": "^2.0.0",
     "pino": "^6.0.0",
     "pino-pretty": "^4.0.0",
